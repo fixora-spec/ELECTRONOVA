@@ -7,12 +7,14 @@ import {
   deleteCategoria
 } from "../controllers/categorias.controller.js";
 
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+
 const categoriasRoutes = Router();
 
 categoriasRoutes.get("/", getCategorias);
 categoriasRoutes.get("/:id", getCategoriaById);
-categoriasRoutes.post("/", createCategoria);
-categoriasRoutes.put("/:id", updateCategoria);
-categoriasRoutes.delete("/:id", deleteCategoria);
+categoriasRoutes.post("/", authMiddleware, createCategoria);
+categoriasRoutes.put("/:id", authMiddleware, updateCategoria);
+categoriasRoutes.delete("/:id", authMiddleware, deleteCategoria);
 
 export { categoriasRoutes };
