@@ -1,0 +1,37 @@
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-family: inherit;
+}
+
+.boton-primario {
+  background-color: var(--primary-blue);
+  color: var(--bg-white);
+}
+
+.boton-primario:hover {
+  background-color: var(--secondary-blue);
+}
+
+.boton-secundario {
+  background-color: var(--accent-yellow);
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.boton-secundario:hover {
+  background-color: var(--accent-yellow-hover);
+}
+
+.boton-icono {
+  display: flex;
+}

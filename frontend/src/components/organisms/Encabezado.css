@@ -1,0 +1,94 @@
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background-color: var(--bg-white);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.encabezado-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.logo-icono {
+  background-color: var(--accent-yellow);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+.logo-texto {
+  display: flex;
+  flex-direction: column;
+}
+.logo-electronova {
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--primary-blue);
+  line-height: 1;
+}
+.logo-slogan {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+.encabezado-nav ul {
+  display: flex;
+  gap: 2rem;
+}
+.encabezado-nav a {
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: color 0.3s;
+}
+.encabezado-nav .activo a {
+  color: var(--primary-blue);
+  border-bottom: 2px solid var(--primary-blue);
+  padding-bottom: 4px;
+}
+.encabezado-acciones {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.barra-busqueda {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-light);
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+}
+.barra-busqueda input {
+  border: none;
+  background: transparent;
+  outline: none;
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+.carrito-icono-contenedor {
+  position: relative;
+  cursor: pointer;
+  color: var(--primary-blue);
+}
+.carrito-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--primary-blue);
+  color: white;
+  font-size: 0.7rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}

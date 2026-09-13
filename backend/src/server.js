@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 
-// connect database
+// conectar base de datos
 connectDB();
 
 
@@ -26,6 +26,10 @@ app.use(
   }),
 );
 
+app.get("/", (req, res) => {
+  res.json({ mensaje: "Conexión exitosa al backend de Electronova" });
+});
+
 // rutas
 app.use("/auth", authRoutes);
 app.use("/productos", productosRoutes);
@@ -36,5 +40,5 @@ app.use("/usuarios", usuariosRoutes);
 const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server on: http://localhost:${PORT}/`);
+  console.log(`Servidor en: http://localhost:${PORT}/`);
 });

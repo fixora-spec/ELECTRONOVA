@@ -1,0 +1,27 @@
+.seccion-destacados {
+  padding: 4rem 10%;
+  background-color: var(--bg-light);
+}
+.seccion-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--accent-yellow);
+  padding-bottom: 0.5rem;
+}
+.seccion-cabecera h2 {
+  font-size: 1.8rem;
+  color: var(--primary-blue);
+  margin: 0;
+}
+.enlace-ver-todos {
+  color: var(--primary-blue);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.cuadricula-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}

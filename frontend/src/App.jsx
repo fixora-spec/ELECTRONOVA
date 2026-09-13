@@ -1,48 +1,30 @@
-import { useEffect, useState } from "react";
-import api from "./services/api";
+import { useState } from "react";
+import "./App.css";
+import Encabezado from "./components/organisms/Encabezado";
+import PieDePagina from "./components/organisms/PieDePagina";
+import { Route, Routes } from "react-router-dom";
+import PaginaInicio from "./components/pages/PaginaInicio";
+import Productos from "./components/pages/Productos";
+import Categorias from "./components/pages/Categorias";
+import Nosotros from "./components/pages/Nosotros";
+import Contacto from "./components/pages/Contacto";
 
-
-function App(){
-
-  const [mensaje, setMensaje] = useState("");
-
-
-  useEffect(()=>{
-
-    api.get("/")
-    .then((respuesta)=>{
-
-      setMensaje(respuesta.data.mensaje);
-
-    })
-    .catch((error)=>{
-
-      console.log(error);
-
-    });
-
-
-  },[]);
-
-
+function App() {
+  const [theme, setTheme] = useState("light");
 
   return (
-
     <>
-
-      <h1>
-        ELECTRONOVA
-      </h1>
-
-      <h2>
-        {mensaje}
-      </h2>
-
+      <Encabezado theme={theme} setTheme={setTheme} />
+      <Routes>
+        <Route Component={PaginaInicio} path={"/"} />
+        <Route Component={Productos} path={"/productos"} />
+        <Route Component={Categorias} path={"/categorias"} />
+        <Route Component={Nosotros} path={"/nosotros"} />
+        <Route Component={Contacto} path={"/contacto"} />
+      </Routes>
+      <PieDePagina />
     </>
-
   );
-
 }
-
 
 export default App;

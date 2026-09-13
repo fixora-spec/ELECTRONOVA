@@ -51,7 +51,7 @@ export const deleteProducto = async (req, res) => {
 
 export const searchProductos = async (req, res) => {
   try {
-    // Basic search implementation for boilerplate
+    // Implementación básica de búsqueda para la plantilla
     res.status(200).json({ message: "Buscando productos" });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,7 +60,7 @@ export const searchProductos = async (req, res) => {
 
 export const filterProductos = async (req, res) => {
   try {
-    // Basic filter implementation for boilerplate
+    // Implementación básica de filtrado para la plantilla
     res.status(200).json({ message: "Filtrando productos" });
   } catch (error) {
     res.status(500).json({ message: error.message });
