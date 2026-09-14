@@ -26,7 +26,7 @@ export default function ModalProductoDetalle({ producto, onClose }) {
           <div className="detalle-info">
             <span className="detalle-categoria">{producto.idCategoria?.nombre || 'Categoría no especificada'}</span>
             <h2 className="detalle-titulo">{producto.nombre}</h2>
-            
+
             <div className="detalle-precio-estado" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
               <PrecioProducto precio={producto.precio} />
             </div>
@@ -36,21 +36,20 @@ export default function ModalProductoDetalle({ producto, onClose }) {
             <hr className="detalle-separador" />
 
             <div className="detalle-secciones">
-              <SeccionDetalleProducto 
-                titulo="Descripción Completa" 
-                contenido={producto.descripcionCompleta} 
-                conScroll={true} 
-              />
-              
-              <SeccionDetalleProducto 
-                titulo="Características" 
-                contenido={producto.caracteristicas} 
+              <SeccionDetalleProducto
+                titulo="Descripción Completa"
+                contenido={producto.descripcionCompleta}
               />
 
-              <SeccionDetalleProducto 
-                titulo="Especificaciones Técnicas" 
-                contenido={producto.especificacionesTec} 
-                preformateado={true} 
+              <SeccionDetalleProducto
+                titulo="Características"
+                contenido={producto.caracteristicas}
+              />
+
+              <SeccionDetalleProducto
+                titulo="Especificaciones Técnicas"
+                contenido={producto.especificacionesTec}
+                preformateado={true}
               />
             </div>
           </div>
