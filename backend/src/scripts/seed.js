@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { connectDB } from "../config/db.js";
 import { Administrador } from "../models/Administrador.js";
@@ -21,7 +20,6 @@ const seedDatabase = async () => {
 
     console.log("Insertando datos de prueba...");
 
-    // 1. Insertar Administrador
     const admin = new Administrador({
       nombre: "Admin Principal",
       correo: "admin@electronova.com",
@@ -29,7 +27,6 @@ const seedDatabase = async () => {
     });
     const savedAdmin = await admin.save();
 
-    // 2. Insertar Empresa
     const empresa = new Empresa({
       nombre: "ELECTRONOVA S.A.C.",
       descripcion: "Catálogo virtual de productos eléctricos",
@@ -39,7 +36,6 @@ const seedDatabase = async () => {
     });
     await empresa.save();
 
-    // 3. Insertar Categoria
     const categoria = new Categoria({
       nombre: "Cables Eléctricos",
       descripcion: "Todo tipo de cables para instalaciones",
@@ -47,7 +43,6 @@ const seedDatabase = async () => {
     });
     const savedCategoria = await categoria.save();
 
-    // 4. Insertar Producto
     const producto = new Producto({
       nombre: "Cable THW 12 AWG",
       productoDestacado: true,

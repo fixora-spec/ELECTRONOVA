@@ -1,0 +1,181 @@
+.pie-pagina {
+  background-color: var(--primary-blue);
+  color: #e0e0e0;
+  padding-top: 4rem;
+}
+
+.pie-pagina-contenedor {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+  gap: 2rem;
+  padding: 0 5%;
+  margin-bottom: 3rem;
+}
+
+.pie-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.logo-icono-blanco {
+  background-color: var(--accent-yellow);
+}
+
+.logo-electronova-blanco {
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--bg-white);
+  line-height: 1;
+}
+
+.logo-slogan-blanco {
+  font-size: 0.7rem;
+  color: #b0c4de;
+}
+
+.pie-descripcion {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+  max-width: 300px;
+}
+
+.pie-redes {
+  display: flex;
+  gap: 1rem;
+}
+
+.red-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.red-icono:hover {
+  background-color: var(--accent-yellow);
+  color: var(--primary-blue);
+  border-color: var(--accent-yellow);
+}
+
+.pie-titulo {
+  color: white;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.pie-enlaces {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.pie-enlaces a {
+  opacity: 0.8;
+  transition: opacity 0.3s, color 0.3s;
+  font-size: 0.95rem;
+}
+
+.pie-enlaces a:hover {
+  opacity: 1;
+  color: var(--accent-yellow);
+}
+
+.pie-contacto {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pie-contacto li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.pie-contacto li span {
+  margin-top: 0.1rem;
+}
+
+.pie-columna-mapa {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pie-mapa-placeholder {
+  background-color: var(--bg-white);
+  color: var(--text-dark);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: 250px;
+}
+
+.pie-mapa-icono {
+  color: var(--primary-blue);
+  margin-bottom: 0.8rem;
+}
+
+.pie-mapa-placeholder p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.pie-mapa-enlace {
+  color: var(--primary-blue);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pie-mapa-enlace:hover {
+  text-decoration: underline;
+}
+
+.pie-pagina-inferior {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 900px) {
+  .pie-pagina-contenedor {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pie-columna-mapa {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .pie-pagina-contenedor {
+    grid-template-columns: 1fr;
+  }
+  .pie-pagina-inferior {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}

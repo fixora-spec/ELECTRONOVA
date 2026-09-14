@@ -1,0 +1,180 @@
+.hero {
+  display: flex;
+  background-color: var(--primary-blue);
+  color: white;
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-contenido {
+  flex: 1;
+  padding: 4rem 5% 4rem 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 2;
+  background: linear-gradient(90deg, var(--primary-blue) 80%, transparent 100%);
+}
+
+.hero-titulo {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+}
+
+.hero-destacado {
+  color: var(--accent-yellow);
+}
+
+.hero-descripcion {
+  font-size: 1.1rem;
+  max-width: 450px;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.hero-beneficios {
+  display: flex;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.beneficio {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.beneficio-texto {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+.beneficio-texto strong {
+  font-weight: 700;
+}
+
+.beneficio-texto span {
+  opacity: 0.8;
+}
+
+.hero-imagen-fondo {
+  flex: 1;
+  position: relative;
+  background-image: url('');
+  /* Añade aquí la URL o ruta de tu imagen */
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, var(--primary-blue) 0%, rgba(8, 45, 91, 0.3) 100%);
+}
+
+.hero-slogan {
+  position: absolute;
+  bottom: 10%;
+  right: 10%;
+  font-family: 'Brush Script MT', cursive, sans-serif;
+  font-size: 3rem;
+  color: var(--accent-yellow);
+  transform: rotate(-10deg);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-imagen-destacada {
+  position: absolute;
+  bottom: 25%;
+  right: 15%;
+  max-width: 500px;
+  z-index: 5;
+  filter: drop-shadow(0px 10px 20px rgba(0, 0, 0, 0.5));
+
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .hero-contenido {
+    padding: 3rem 5%;
+    align-items: center;
+    text-align: center;
+    background: var(--primary-blue);
+  }
+
+  .hero-titulo {
+    font-size: 2.2rem;
+  }
+
+  .hero-beneficios {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+    align-items: center;
+  }
+
+  .hero-imagen-fondo {
+    min-height: 250px;
+    width: 100%;
+  }
+
+  .hero-overlay {
+    background: rgba(8, 45, 91, 0.4);
+  }
+
+  .hero-slogan {
+    font-size: 2rem;
+    bottom: 20%;
+    right: 50%;
+    transform: translateX(50%) rotate(-5deg);
+  }
+
+  .hero-imagen-destacada {
+    max-width: 250px;
+    bottom: 35%;
+    right: 50%;
+    transform: translateX(50%);
+    animation: float-mobile 6s ease-in-out infinite;
+  }
+}
+
+@keyframes float-mobile {
+  0% {
+    transform: translateX(50%) translateY(0px);
+  }
+
+  50% {
+    transform: translateX(50%) translateY(-10px);
+  }
+
+  100% {
+    transform: translateX(50%) translateY(0px);
+  }
+}

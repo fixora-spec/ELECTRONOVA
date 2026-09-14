@@ -1,0 +1,317 @@
+/* Login.css - Rediseño Split Screen */
+.login-pagina-split {
+  display: flex;
+  min-height: calc(100vh - var(--header-height));
+  width: 100%;
+}
+
+/* --- Panel Izquierdo --- */
+.login-panel-izquierdo {
+  flex: 1;
+  background-color: #0d284a; /* Azul oscuro del diseño */
+  background-image: linear-gradient(135deg, rgba(13, 40, 74, 0.9) 0%, rgba(13, 40, 74, 0.7) 100%), url('https://images.unsplash.com/photo-1540340061722-9293d5163008?q=80&w=2071&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.panel-izq-contenido {
+  max-width: 500px;
+  z-index: 2;
+}
+
+.panel-izq-contenido h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.text-yellow {
+  color: var(--accent-yellow);
+}
+
+.subtitulo-panel {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.divisor-amarillo {
+  width: 50px;
+  height: 4px;
+  background-color: var(--accent-yellow);
+  margin-bottom: 3rem;
+  border-radius: 2px;
+}
+
+.caracteristicas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.caracteristica-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.icono-circulo {
+  background-color: rgba(255, 255, 255, 0.15);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.caracteristica-item h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.caracteristica-item p {
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.slogan-inferior {
+  position: absolute;
+  bottom: 2rem;
+  left: 4rem;
+}
+
+.slogan-cursiva {
+  font-family: 'Caveat', cursive, sans-serif; /* Requiere importar fuente o usar un estilo similar */
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.2;
+  transform: rotate(-5deg);
+  display: inline-block;
+}
+
+/* --- Panel Derecho --- */
+.login-panel-derecho {
+  flex: 1;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-caja-blanca {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  padding: 3.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.login-header-form {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.logo-electronova-form {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.logo-slogan-form {
+  font-size: 0.8rem;
+  color: #666;
+  display: block;
+  margin-bottom: 2rem;
+}
+
+.login-header-form h2 {
+  font-size: 2rem;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.login-header-form p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.login-error-msg {
+  background-color: #fdeaea;
+  color: #d32f2f;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #ffcdd2;
+}
+
+.form-login-split {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.input-group-split .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: 14px;
+  color: #666;
+}
+
+.input-group-split input {
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 2.8rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background-color: #fff;
+  color: #333;
+}
+
+.input-group-split input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(13, 40, 74, 0.1);
+}
+
+.btn-ver-pass {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #555;
+  cursor: pointer;
+}
+
+.link-olvido {
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link-olvido:hover {
+  text-decoration: underline;
+}
+
+.btn-ingresar-split {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-ingresar-split:hover {
+  background-color: #091f3a;
+}
+
+.btn-ingresar-split:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-footer-form {
+  text-align: center;
+  margin-top: 2.5rem;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Responsividad */
+@media (max-width: 992px) {
+  .login-pagina-split {
+    flex-direction: column;
+  }
+  
+  .login-panel-izquierdo {
+    padding: 3rem 2rem;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .caracteristica-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .divisor-amarillo {
+    margin: 0 auto 2rem auto;
+  }
+  
+  .slogan-inferior {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-panel-derecho {
+    padding: 1rem;
+  }
+  
+  .login-caja-blanca {
+    padding: 2rem 1.5rem;
+  }
+  
+  .form-options {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}

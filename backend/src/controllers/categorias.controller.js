@@ -31,7 +31,7 @@ export const createCategoria = async (req, res) => {
 
 export const updateCategoria = async (req, res) => {
   try {
-    const categoriaActualizada = await Categoria.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const categoriaActualizada = await Categoria.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
     if (!categoriaActualizada) return res.status(404).json({ message: "Categoría no encontrada" });
     res.status(200).json(categoriaActualizada);
   } catch (error) {
