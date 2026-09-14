@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import './PieDePagina.css';
 
@@ -7,7 +7,6 @@ const PieDePagina = () => {
     <footer className="pie-pagina">
       <div className="pie-pagina-contenedor">
 
-        {/* Columna Logo */}
         <div className="pie-columna">
           <div className="pie-logo">
             <div className="logo-icono logo-icono-blanco">
@@ -30,19 +29,16 @@ const PieDePagina = () => {
           </div>
         </div>
 
-        {/* Columna Enlaces */}
         <div className="pie-columna">
           <h4 className="pie-titulo">Enlaces rápidos</h4>
           <ul className="pie-enlaces">
             <li><a href="/"> Inicio</a></li>
             <li><a href="/productos"> Productos</a></li>
-            <li><a href="/categorias"> Categorías</a></li>
-            <li><a href="/nosotros">Nosotros</a></li>
+            <li><a href="/nosotros"> Empresa</a></li>
             <li><a href="/contacto"> Contacto</a></li>
           </ul>
         </div>
 
-        {/* Columna Contacto */}
         <div className="pie-columna">
           <h4 className="pie-titulo">Información de contacto</h4>
           <ul className="pie-contacto">
@@ -65,7 +61,6 @@ const PieDePagina = () => {
           </ul>
         </div>
 
-        {/* Columna Mapa */}
         <div className="pie-columna pie-columna-mapa">
           <div className="pie-mapa-placeholder">
             <MapPin size={32} className="pie-mapa-icono" />

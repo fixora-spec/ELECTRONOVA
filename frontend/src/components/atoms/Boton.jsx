@@ -1,4 +1,4 @@
-import React from 'react';
+
 import './Boton.css';
 
 const Boton = ({ children, variant = 'primario', onClick, icon: Icon, className = '' }) => {

@@ -1,0 +1,392 @@
+/* AdminCategorias.css y estilos generales CRUD */
+.admin-modulo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.admin-cabecera-modulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-cabecera-modulo h2 {
+  color: var(--primary-blue);
+  margin-bottom: 0.25rem;
+}
+
+.admin-cabecera-modulo p {
+  color: #666;
+  margin: 0;
+}
+
+.btn-nuevo {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-nuevo:hover {
+  background-color: #091f3a;
+}
+
+.admin-controles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.admin-buscador {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.icono-buscar {
+  color: #888;
+  margin-right: 0.5rem;
+}
+
+.admin-buscador input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: #333;
+}
+
+/* Tablas */
+.tabla-contenedor {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  overflow-x: auto;
+}
+
+.tabla-admin {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-admin th {
+  background-color: #f8f9fa;
+  color: #555;
+  font-weight: 600;
+  text-align: left;
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid #eee;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.tabla-admin td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  vertical-align: middle;
+}
+
+.tabla-admin tr:hover {
+  background-color: #fafafa;
+}
+
+.fw-bold {
+  font-weight: 600;
+}
+
+.text-muted {
+  color: #999;
+  font-style: italic;
+}
+
+.texto-centrado {
+  text-align: center;
+  padding: 3rem !important;
+  color: #888 !important;
+}
+
+/* Acciones de tabla */
+.acciones-celda {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-accion {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-editar {
+  background-color: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
+}
+
+.btn-editar:hover {
+  background-color: #1976d2;
+  color: white;
+}
+
+.btn-eliminar {
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #d32f2f;
+}
+
+.btn-eliminar:hover {
+  background-color: #d32f2f;
+  color: white;
+}
+
+/* Modales */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-contenido {
+  background-color: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.modal-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-cabecera h3 {
+  margin: 0;
+  color: var(--primary-blue);
+  font-size: 1.25rem;
+}
+
+.btn-cerrar-modal {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-cerrar-modal:hover {
+  color: #333;
+}
+
+.modal-formulario {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.modal-formulario .form-grupo {
+  margin-bottom: 1.5rem;
+}
+
+.modal-formulario label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.modal-formulario input,
+.modal-formulario textarea,
+.modal-formulario select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--primary-blue);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.modal-formulario input:focus,
+.modal-formulario textarea:focus,
+.modal-formulario select:focus {
+  outline: none;
+  border-color: #0d284a; /* Un azul más oscuro al enfocar */
+  box-shadow: 0 0 0 2px rgba(13, 40, 74, 0.1);
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.btn-secundario {
+  background-color: #f1f3f5;
+  color: #495057;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secundario:hover {
+  background-color: #e9ecef;
+}
+
+.btn-primario {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primario:hover {
+  background-color: #091f3a;
+}
+
+.btn-primario:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Input File Personalizado */
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.file-input-hidden {
+  display: none !important;
+}
+
+.btn-file-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #e3f2fd;
+  color: var(--primary-blue);
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 1px solid #bbdefb;
+  transition: all 0.2s;
+  margin: 0 !important;
+}
+
+.btn-file-upload:hover {
+  background-color: #bbdefb;
+  color: #091f3a;
+}
+
+.file-name-display {
+  font-size: 0.85rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.admin-productos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .admin-productos-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .admin-cabecera-modulo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .btn-nuevo {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-controles {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .admin-buscador {
+    max-width: 100%;
+  }
+
+  .modal-contenido {
+    max-width: 95%;
+    margin: 1rem;
+  }
+
+  .modal-formulario .form-grupo {
+    margin-bottom: 1rem;
+  }
+
+  .modal-acciones {
+    flex-direction: column;
+  }
+
+  .modal-acciones button {
+    width: 100%;
+  }
+}

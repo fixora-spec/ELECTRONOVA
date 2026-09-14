@@ -1,4 +1,4 @@
-export default function Nosotros() {
+function Nosotros() {
 
     return (
         <>
@@ -11,3 +11,5 @@ export default function Nosotros() {
 }
 
 export { Nosotros };
+
+

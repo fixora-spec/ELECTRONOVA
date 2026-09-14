@@ -1,4 +1,4 @@
-export default function Contacto() {
+function Contacto() {
 
     return (
         <>
@@ -11,3 +11,5 @@ export default function Contacto() {
 }
 
 export { Contacto };
+
+

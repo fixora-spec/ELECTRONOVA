@@ -15,7 +15,15 @@ const ProductoSchema = new Schema({
   descripcionCompleta: { type: String, required: false }
 }, {
   timestamps: true,
-  versionKey: false
+  versionKey: false,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+ProductoSchema.virtual('imagenes', {
+  ref: 'Imagen',
+  localField: '_id',
+  foreignField: 'idProducto'
 });
 
 export const Producto = model("Producto", ProductoSchema);

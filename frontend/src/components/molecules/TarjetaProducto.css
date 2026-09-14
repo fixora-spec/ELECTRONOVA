@@ -1,43 +1,79 @@
 .tarjeta-producto {
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  transition: transform 0.3s, box-shadow 0.3s;
+  height: 100%;
   cursor: pointer;
+  position: relative;
 }
+
 .tarjeta-producto:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+  border-color: #e0e0e0;
 }
+
 .producto-imagen {
-  height: 120px;
+  height: 220px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  background-color: #f8f9fa; /* Fondo suave para resaltar el producto */
+  padding: 1.5rem;
+  overflow: hidden;
+  position: relative;
 }
+
 .producto-imagen img {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
+  transition: transform 0.5s ease;
 }
+
+.tarjeta-producto:hover .producto-imagen img {
+  transform: scale(1.08);
+}
+
 .producto-info {
-  width: 100%;
-  text-align: left;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background: white;
 }
+
 .producto-titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  color: #1a202c;
+  line-height: 1.4;
+  /* Truncar texto con puntos suspensivos en una sola línea */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.producto-precio {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: auto 0 0 0; /* Empuja el precio hacia abajo si el título es corto */
+  color: #e53935; /* Rojo */
+  display: flex;
+  align-items: center;
+}
+
+.producto-precio::before {
+  content: 'S/';
   font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-dark);
-}
-.producto-precio {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 0.8rem;
-  color: var(--primary-blue);
+  margin-right: 4px;
+  color: #e53935; /* Símbolo también rojo */
 }

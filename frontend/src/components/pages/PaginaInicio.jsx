@@ -1,42 +1,89 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import SeccionHero from '../organisms/SeccionHero';
 import TarjetaProducto from '../molecules/TarjetaProducto';
+import ModalProductoDetalle from '../organisms/ModalProductoDetalle';
+import { productosService } from '../../services/productos.service';
 import './PaginaInicio.css';
 
-const productosMock = [
-  { id: 1, titulo: 'Foco LED 9W', precio: 12.90, imagen: '', estado: 'En stock' },
-  { id: 2, titulo: 'Cable THHN 12 AWG', precio: 2.50, imagen: '', estado: 'En stock' },
-  { id: 3, titulo: 'Interruptor Simple', precio: 8.90, imagen: '', estado: 'En stock' },
-  { id: 4, titulo: 'Tomacorriente Doble', precio: 15.90, imagen: '', estado: 'En stock' },
-  { id: 5, titulo: 'Breaker 20A', precio: 25.90, imagen: '', estado: 'En stock' },
-];
+function PaginaInicio() {
+  const [productosDestacados, setProductosDestacados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
-const PaginaInicio = () => {
+  useEffect(() => {
+    const cargarDestacados = async () => {
+      try {
+        const data = await productosService.getAll();
+        // Filtrar solo los destacados si existe la propiedad, o mostrar los primeros 5
+        const destacados = data.filter(p => p.productoDestacado).slice(0, 5);
+        setProductosDestacados(destacados.length > 0 ? destacados : data.slice(0, 5));
+      } catch (error) {
+        console.error("Error cargando productos destacados:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    cargarDestacados();
+  }, []);
+
+  const getImagenUrl = (prod) => {
+    if (prod.imagenes && prod.imagenes.length > 0) {
+      const url = prod.imagenes[0].ubicacion;
+      return url.startsWith('http') || url.startsWith('data:image') ? url : `${import.meta.env.VITE_API_URL}${url}`;
+    }
+    return prod.imagenPrincipal || "https://via.placeholder.com/300";
+  };
+
   return (
     <div className="pagina-inicio">
       <main>
         <SeccionHero />
-        
+
         <section className="seccion-destacados">
           <div className="seccion-cabecera">
             <h2>Productos destacados</h2>
-            <a href="/productos" className="enlace-ver-todos">Ver todos los productos →</a>
+            <a href="/productos" className="enlace-ver-todos">Ver todos los productos </a>
           </div>
-          
-          <div className="cuadricula-productos">
-            {productosMock.map(prod => (
-              <TarjetaProducto 
-                key={prod.id}
-                titulo={prod.titulo}
-                precio={prod.precio}
-                imagen={prod.imagen}
-                estado={prod.estado}
-              />
-            ))}
-          </div>
+
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>Cargando productos...</div>
+          ) : (
+            <div className="cuadricula-productos">
+              {productosDestacados.length > 0 ? (
+                productosDestacados.map(prod => (
+                  <TarjetaProducto
+                    key={prod._id || prod.idProducto}
+                    id={prod._id || prod.idProducto}
+                    titulo={prod.nombre}
+                    precio={prod.precio}
+                    imagen={getImagenUrl(prod)}
+                    estado={prod.estado}
+                    onClick={async () => {
+                      try {
+                        const prodCompleto = await productosService.getById(prod._id || prod.idProducto);
+                        setProductoSeleccionado(prodCompleto);
+                      } catch (err) {
+                        console.error('Error fetching full product', err);
+                        setProductoSeleccionado(prod);
+                      }
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="sin-resultados">No hay productos destacados por el momento.</div>
+              )}
+            </div>
+          )}
         </section>
       </main>
+
+      <ModalProductoDetalle
+        producto={productoSeleccionado}
+        onClose={() => setProductoSeleccionado(null)}
+      />
     </div>
   );
-};
-export default PaginaInicio;
+}
+export { PaginaInicio };
+
+

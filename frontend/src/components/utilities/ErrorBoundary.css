@@ -1,0 +1,78 @@
+.error-boundary-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  color: #333;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-boundary-content {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
+
+.error-icon {
+  font-size: 4rem;
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.error-boundary-content h1 {
+  color: #0d284a; /* primary-blue */
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-boundary-content p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.error-boundary-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-recargar {
+  background-color: #ffc107; /* accent-yellow */
+  color: #0d284a;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.btn-recargar:hover {
+  background-color: #e0a800;
+  transform: translateY(-2px);
+}
+
+.btn-volver-inicio {
+  background-color: transparent;
+  color: #0d284a;
+  border: 1px solid #0d284a;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.btn-volver-inicio:hover {
+  background-color: #f1f3f5;
+}
