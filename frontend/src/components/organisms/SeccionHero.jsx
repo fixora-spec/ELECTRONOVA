@@ -1,10 +1,12 @@
-
+import { useNavigate } from 'react-router-dom';
 import { Truck, ShieldCheck, Headset } from 'lucide-react';
 import Boton from '../atoms/Boton';
 import imagenInicio from '../../assets/img-inicio.png';
 import './SeccionHero.css';
 
 const SeccionHero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="hero">
       <div className="hero-contenido">
@@ -16,7 +18,7 @@ const SeccionHero = () => {
         <p className="hero-descripcion">
           Encuentra la mejor calidad en materiales eléctricos para tus proyectos, hogar y negocio.
         </p>
-        <Boton variant="secundario">Ver catálogo</Boton>
+        <Boton variant="secundario" onClick={() => navigate('/productos')}>Ver catálogo</Boton>
 
         <div className="hero-beneficios">
           <div className="beneficio">
