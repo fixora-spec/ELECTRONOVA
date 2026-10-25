@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Lock, Mail, Settings, Folder, Image, Users, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, Settings, Folder, Users, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import './Login.css';
 
 function Login() {
@@ -14,15 +14,13 @@ function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      await login({ correo, contraseña });
+      const data = await login({ correo, contraseña, recordarme });
       
       if (recordarme) {
         localStorage.setItem('recordar_correo', correo);
@@ -30,7 +28,13 @@ function Login() {
         localStorage.removeItem('recordar_correo');
       }
 
-      navigate('/admin/dashboard');
+      // Si es administrador va a su panel, si es usuario común va al catálogo de productos
+      const esAdmin = data.user?.rol === 'admin' || data.admin;
+      if (esAdmin) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/productos');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Credenciales incorrectas. Verifica tus datos.');
     } finally {
@@ -42,8 +46,8 @@ function Login() {
     <div className="login-pagina-split">
       <div className="login-panel-izquierdo">
         <div className="panel-izq-contenido">
-          <h1>Bienvenido al<br/>sistema <span className="text-yellow">ELECTRONOVA</span></h1>
-          <p className="subtitulo-panel">Accede al panel administrativo para gestionar el catálogo de productos eléctricos.</p>
+          <h1>Bienvenido a <br/><span className="text-yellow">ELECTRONOVA</span></h1>
+          <p className="subtitulo-panel">Catálogo de productos y equipamiento eléctrico industrial y domiciliario.</p>
           
           <div className="divisor-amarillo"></div>
 
@@ -51,32 +55,24 @@ function Login() {
             <div className="caracteristica-item">
               <div className="icono-circulo"><Settings size={20} /></div>
               <div>
-                <h4>Gestiona productos</h4>
-                <p>Registra, edita y actualiza tu catálogo.</p>
+                <h4>Gestión integral</h4>
+                <p>Acceso seguro para administración de catálogo y stock.</p>
               </div>
             </div>
             
             <div className="caracteristica-item">
               <div className="icono-circulo"><Folder size={20} /></div>
               <div>
-                <h4>Administra categorías</h4>
-                <p>Organiza tus productos de forma simple.</p>
-              </div>
-            </div>
-            
-            <div className="caracteristica-item">
-              <div className="icono-circulo"><Image size={20} /></div>
-              <div>
-                <h4>Gestiona imágenes</h4>
-                <p>Mantén tu catálogo siempre actualizado.</p>
+                <h4>Categorías organizadas</h4>
+                <p>Equipos, cables, luminarias y componentes industriales.</p>
               </div>
             </div>
             
             <div className="caracteristica-item">
               <div className="icono-circulo"><Users size={20} /></div>
               <div>
-                <h4>Control de usuarios</h4>
-                <p>Administra el acceso al sistema.</p>
+                <h4>Control de accesos</h4>
+                <p>Separación de roles para clientes y administradores.</p>
               </div>
             </div>
           </div>
@@ -96,7 +92,6 @@ function Login() {
             <span className="logo-slogan-form">Catálogo de Productos Eléctricos</span>
             
             <h2>Iniciar sesión</h2>
-            <p>Accede al panel administrativo</p>
           </div>
           
           {error && <div className="login-error-msg">{error}</div>}
@@ -145,18 +140,40 @@ function Login() {
                 <span className="checkmark"></span>
                 Recordarme
               </label>
+
+              <Link to="/forgot-password" className="link-olvido">
+                ¿Olvidaste tu contraseña?
+              </Link>
             </div>
             
             <button type="submit" className="btn-ingresar-split" disabled={loading}>
-               {loading ? 'Ingresando...' : 'Ingresar'}
+               {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </button>
-            
 
+            <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.9rem', color: '#666' }}>
+              ¿No tienes cuenta?{' '}
+              <Link to="/registro" style={{ color: 'var(--primary-blue, #0d284a)', fontWeight: '600', textDecoration: 'none' }}>
+                Regístrate
+              </Link>
+            </div>
+
+            <div style={{ borderTop: '1px solid #e5e7eb', marginTop: '16px', paddingTop: '16px', textAlign: 'center' }}>
+              <Link 
+                to="/productos" 
+                style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '6px', 
+                  color: '#4b5563', 
+                  fontSize: '0.9rem', 
+                  textDecoration: 'none',
+                  fontWeight: '500'
+                }}
+              >
+                Continuar como invitado <ArrowRight size={16} />
+              </Link>
+            </div>
           </form>
-
-          <div className="login-footer-form" style={{ marginTop: '1.5rem', opacity: 0.7 }}>
-            Solo personal autorizado puede acceder al sistema.
-          </div>
         </div>
       </div>
     </div>
@@ -164,4 +181,3 @@ function Login() {
 }
 
 export { Login };
-

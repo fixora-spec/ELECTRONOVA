@@ -1,10 +1,17 @@
+/**
+ * @file usuarios.routes.js
+ * @description Ruta REST para listar usuarios y administradores (acceso exclusivo para administradores).
+ * @module routes/usuarios
+ */
+
 import { Router } from "express";
 import { getUsuarios } from "../controllers/usuarios.controller.js";
-import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.js";
 
 const usuariosRoutes = Router();
 
-// Protegido con authMiddleware
-usuariosRoutes.get("/", authMiddleware, getUsuarios);
+// Protegido: únicamente administradores autenticados
+usuariosRoutes.get("/", authMiddleware, adminMiddleware, getUsuarios);
 
 export { usuariosRoutes };
+

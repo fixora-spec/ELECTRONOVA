@@ -9,6 +9,7 @@ import { Productos } from "./components/pages/Productos";
 import { Nosotros } from "./components/pages/Nosotros";
 import { Contacto } from "./components/pages/Contacto";
 import { Login } from "./components/pages/Login";
+import { Register } from "./components/pages/Register";
 import { ForgotPassword } from "./components/pages/ForgotPassword";
 import { ResetPassword } from "./components/pages/ResetPassword";
 
@@ -61,6 +62,20 @@ function App() {
             <>
               <Encabezado theme={theme} setTheme={setTheme} />
               <Login />
+              <PieDePagina />
+            </>
+          } />
+          <Route path="/registro" element={
+            <>
+              <Encabezado theme={theme} setTheme={setTheme} />
+              <Register />
+              <PieDePagina />
+            </>
+          } />
+          <Route path="/register" element={
+            <>
+              <Encabezado theme={theme} setTheme={setTheme} />
+              <Register />
               <PieDePagina />
             </>
           } />

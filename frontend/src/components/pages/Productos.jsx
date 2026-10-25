@@ -29,7 +29,7 @@ function Productos() {
     return q || '';
   });
 
-  // Cargar categorías una sola vez
+  // Cargar categorías una sola vez al montar
   useEffect(() => {
     const cargarCategorias = async () => {
       try {
@@ -71,29 +71,23 @@ function Productos() {
     }
   };
 
-  // Carga inicial y respuesta a parámetros en la URL (?q=...)
-  useEffect(() => {
-    const q = new URLSearchParams(location.search).get('q');
-    if (q !== null && q !== busqueda) {
-      setBusqueda(q);
-      setPaginaActual(1);
-      cargarProductos(1, categoriaSeleccionada, q);
-    } else {
-      cargarProductos(paginaActual, categoriaSeleccionada, busqueda);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search]);
+  const [prevSearch, setPrevSearch] = useState(location.search);
+  if (location.search !== prevSearch) {
+    setPrevSearch(location.search);
+    const q = new URLSearchParams(location.search).get('q') || '';
+    setBusqueda(q);
+    setPaginaActual(1);
+  }
 
-  // Debounce para búsqueda en vivo al escribir
+  // Carga reactiva de productos cuando cambian página, categoría o búsqueda
   useEffect(() => {
     const timer = setTimeout(() => {
-      setPaginaActual(1);
-      cargarProductos(1, categoriaSeleccionada, busqueda);
-    }, 400);
+      cargarProductos(paginaActual, categoriaSeleccionada, busqueda);
+    }, 350);
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [busqueda]);
+  }, [paginaActual, categoriaSeleccionada, busqueda]);
 
   const handleBuscar = (e) => {
     e.preventDefault();

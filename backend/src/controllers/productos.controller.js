@@ -1,122 +1,246 @@
+/**
+ * @file productos.controller.js
+ * @description Controlador para la gestión de productos del catálogo ELECTRONOVA.
+ * Incluye validaciones con Zod y manejo estructurado de errores con try...catch.
+ * @module controllers/productos
+ */
+
+import * as z from "zod";
 import { productosService } from "../services/productos.service.js";
+import { productoSchema } from "../schemas/productos.schema.js";
 
 const productosController = {
-  getProductos: (req, res) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
-    const soloActivos = req.query.soloActivos === "true" || req.query.estado === "true";
+  /**
+   * Obtiene la lista paginada de productos, con opción de filtrar solo activos.
+   * @route GET /productos
+   */
+  getProductos: async (req, res) => {
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 12;
+      const soloActivos = req.query.soloActivos === "true" || req.query.estado === "true";
 
-    productosService
-      .getProductos(page, limit, soloActivos)
-      .then((response) =>
-        res.status(200).json({
-          message: "Productos Obtenidos",
-          data: response.productos,
-          pagination: response.pagination,
-        })
-      )
-      .catch((error) => res.status(500).json({ message: error.message }));
-  },
-
-  getProductoById: (req, res) => {
-    const id = req.params.id;
-    productosService
-      .getProductoById(id)
-      .then((producto) =>
-        res.status(200).json({
-          message: "Producto encontrado",
-          data: producto,
-        })
-      )
-      .catch((error) => {
-        if (error.message === "Producto no encontrado") {
-          return res.status(404).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+      const response = await productosService.getProductos(page, limit, soloActivos);
+      return res.status(200).json({
+        message: "Productos Obtenidos",
+        data: response.productos,
+        pagination: response.pagination,
       });
+    } catch (error) {
+      if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido",
+          error: error.message,
+        });
+      }
+    }
   },
 
-  createProducto: (req, res) => {
-    productosService
-      .crearProducto(req.body, req.files)
-      .then((nuevoProducto) =>
-        res.status(201).json({
-          message: "Producto creado con éxito",
-          data: nuevoProducto,
-        })
-      )
-      .catch((err) =>
-        res.status(500).json({ message: "Error al crear producto", error: err.message })
+  /**
+   * Obtiene el detalle de un producto por su identificador único.
+   * @route GET /productos/:id
+   */
+  getProductoById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const producto = await productosService.getProductoById(id);
+
+      return res.status(200).json({
+        message: "Producto encontrado",
+        data: producto,
+      });
+    } catch (error) {
+      if (error.message === "Producto no encontrado") {
+        return res.status(404).json({ message: error.message });
+      } else if (error.name === "CastError") {
+        return res.status(400).json({ message: "ID de producto inválido" });
+      } else if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido",
+          error: error.message,
+        });
+      }
+    }
+  },
+
+  /**
+   * Crea un nuevo producto validando los campos con Zod y procesando imágenes.
+   * @route POST /productos
+   */
+  createProducto: async (req, res) => {
+    try {
+      const validatedBody = productoSchema.parse(req.body);
+      const datosProducto = {
+        ...req.body,
+        ...validatedBody,
+        idAdministrador: req.admin?.id || req.body.idAdministrador,
+      };
+
+      const nuevoProducto = await productosService.crearProducto(datosProducto, req.files);
+      return res.status(201).json({
+        message: "Producto creado con éxito",
+        data: nuevoProducto,
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: error.issues[0]?.message || "Datos del producto inválidos.",
+          issues: error.issues,
+        });
+      } else if (error.name === "ValidationError") {
+        return res.status(400).json({ message: error.message });
+      } else if (error.message === "No se pueden subir más de 5 imágenes por producto.") {
+        return res.status(400).json({ message: error.message });
+      } else if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido",
+          error: error.message,
+        });
+      }
+    }
+  },
+
+  /**
+   * Actualiza los datos o imágenes de un producto existente.
+   * @route PUT /productos/:id
+   */
+  updateProducto: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const validatedBody = productoSchema.partial().parse(req.body);
+      const datosProducto = {
+        ...req.body,
+        ...validatedBody,
+      };
+
+      const productoActualizado = await productosService.actualizarProducto(
+        id,
+        datosProducto,
+        req.files,
+        req.body.imagenesExistentes
       );
-  },
 
-  updateProducto: (req, res) => {
-    const id = req.params.id;
-    productosService
-      .actualizarProducto(id, req.body, req.files, req.body.imagenesExistentes)
-      .then((productoActualizado) =>
-        res.status(200).json({
-          message: "Producto actualizado con éxito",
-          data: productoActualizado,
-        })
-      )
-      .catch((error) => {
-        if (error.message === "Producto no encontrado") {
-          return res.status(404).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+      return res.status(200).json({
+        message: "Producto actualizado con éxito",
+        data: productoActualizado,
       });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: error.issues[0]?.message || "Datos del producto inválidos.",
+          issues: error.issues,
+        });
+      } else if (error.message === "Producto no encontrado") {
+        return res.status(404).json({ message: error.message });
+      } else if (error.name === "CastError") {
+        return res.status(400).json({ message: "ID de producto inválido" });
+      } else if (error.name === "ValidationError") {
+        return res.status(400).json({ message: error.message });
+      } else if (error.message?.includes("más de 5 imágenes")) {
+        return res.status(400).json({ message: error.message });
+      } else if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido",
+          error: error.message,
+        });
+      }
+    }
   },
 
-  deleteProducto: (req, res) => {
-    const id = req.params.id;
-    productosService
-      .eliminarProducto(id)
-      .then(() =>
-        res.status(200).json({
-          message: "Producto eliminado con éxito",
-        })
-      )
-      .catch((error) => {
-        if (error.message === "Producto no encontrado") {
-          return res.status(404).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+  /**
+   * Elimina un producto y sus imágenes asociadas.
+   * @route DELETE /productos/:id
+   */
+  deleteProducto: async (req, res) => {
+    try {
+      const { id } = req.params;
+      await productosService.eliminarProducto(id);
+
+      return res.status(200).json({
+        message: "Producto eliminado con éxito",
       });
+    } catch (error) {
+      if (error.message === "Producto no encontrado") {
+        return res.status(404).json({ message: error.message });
+      } else if (error.name === "CastError") {
+        return res.status(400).json({ message: "ID de producto inválido" });
+      } else if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido",
+          error: error.message,
+        });
+      }
+    }
   },
 
-  searchProductos: (req, res) => {
-    const { q } = req.query;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+  /**
+   * Realiza búsquedas de productos por coincidencia de texto.
+   * @route GET /productos/buscar
+   */
+  searchProductos: async (req, res) => {
+    try {
+      const { q } = req.query;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 12;
 
-    productosService
-      .buscar(q, page, limit)
-      .then((response) =>
-        res.status(200).json({
-          message: "Búsqueda completada",
-          data: response.productos,
-          pagination: response.pagination,
-        })
-      )
-      .catch((error) => res.status(500).json({ message: error.message }));
+      const response = await productosService.buscar(q, page, limit);
+      return res.status(200).json({
+        message: "Búsqueda completada",
+        data: response.productos,
+        pagination: response.pagination,
+      });
+    } catch (error) {
+      if (error.name === "CastError") {
+        return res.status(400).json({ message: "Parámetro de búsqueda inválido" });
+      } else if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido",
+          error: error.message,
+        });
+      }
+    }
   },
 
-  filterProductos: (req, res) => {
-    const { categoria } = req.query;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 12;
+  /**
+   * Filtra productos pertenecientes a una categoría específica.
+   * @route GET /productos/filtrar
+   */
+  filterProductos: async (req, res) => {
+    try {
+      const { categoria } = req.query;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 12;
 
-    productosService
-      .filtrarPorCategoria(categoria, page, limit)
-      .then((response) =>
-        res.status(200).json({
-          message: "Filtro aplicado",
-          data: response.productos,
-          pagination: response.pagination,
-        })
-      )
-      .catch((error) => res.status(500).json({ message: error.message }));
+      const response = await productosService.filtrarPorCategoria(categoria, page, limit);
+      return res.status(200).json({
+        message: "Filtro aplicado",
+        data: response.productos,
+        pagination: response.pagination,
+      });
+    } catch (error) {
+      if (error.name === "CastError") {
+        return res.status(400).json({ message: "ID de categoría inválido" });
+      } else if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido",
+          error: error.message,
+        });
+      }
+    }
   },
 };
 
@@ -138,3 +262,4 @@ export {
   searchProductos,
   filterProductos,
 };
+

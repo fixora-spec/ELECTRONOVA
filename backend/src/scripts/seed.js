@@ -5,6 +5,7 @@ import { Categoria } from "../models/Categoria.js";
 import { Empresa } from "../models/Empresa.js";
 import { Producto } from "../models/Producto.js";
 import { Imagen } from "../models/Imagen.js";
+import { Usuario } from "../models/Usuario.js";
 
 dotenv.config();
 
@@ -27,19 +28,28 @@ const seedDatabase = async () => {
     console.log("Limpiando la base de datos...");
     await Promise.all([
       Administrador.deleteMany({}),
+      Usuario.deleteMany({}),
       Categoria.deleteMany({}),
       Empresa.deleteMany({}),
       Producto.deleteMany({}),
       Imagen.deleteMany({}),
     ]);
 
-    console.log("Creando Administrador y Empresa...");
+    console.log("Creando Administrador, Usuario de prueba y Empresa...");
     const admin = new Administrador({
       nombre: "Admin Principal",
       correo: "admin@electronova.com",
       contraseña: "password123",
     });
     const savedAdmin = await admin.save();
+
+    const cliente = new Usuario({
+      nombre: "Cliente Demo",
+      correo: "cliente@electronova.com",
+      contraseña: "password123",
+      rol: "usuario",
+    });
+    const savedCliente = await cliente.save();
 
     const empresa = new Empresa({
       nombre: "ELECTRONOVA S.A.C.",
@@ -1195,6 +1205,7 @@ const seedDatabase = async () => {
     console.log("==================================================");
     console.log("¡SEED EXITOSO!");
     console.log(`- 1 Administrador creado (${savedAdmin.correo})`);
+    console.log(`- 1 Cliente de prueba creado (${savedCliente.correo})`);
     console.log(`- 1 Empresa registrada (${empresa.nombre})`);
     console.log(`- ${categoriasInsertadas.length} Categorías eléctricas creadas`);
     console.log(`- ${productosGuardados.length} Productos reales catalogados`);
