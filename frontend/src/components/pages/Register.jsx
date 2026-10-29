@@ -33,10 +33,17 @@ function Register() {
     setLoading(true);
 
     try {
-      await register({ nombre, correo, contraseña });
+      await register({
+        nombre,
+        correo,
+        contraseña,
+        rePassword: confirmarContraseña,
+        confirmarContraseña,
+      });
       navigate('/productos');
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al registrar la cuenta. Intente nuevamente.');
+      const issueMsg = err.response?.data?.issues?.[0]?.message;
+      setError(issueMsg || err.response?.data?.message || err.message || 'Error al registrar la cuenta. Intente nuevamente.');
     } finally {
       setLoading(false);
     }

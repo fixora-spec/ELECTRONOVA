@@ -1,11 +1,6 @@
-/**
- * @file auth.routes.js
- * @description Definición de rutas REST para autenticación y control de accesos en ELECTRONOVA.
- * @module routes/auth
- */
-
 import { Router } from "express";
 import {
+  authController,
   register,
   login,
   logout,
@@ -18,20 +13,11 @@ import { authLimiter } from "../middlewares/rateLimiter.middleware.js";
 
 const authRoutes = Router();
 
-// ==========================================
-// Rutas de Autenticación Pública (con Rate Limit)
-// ==========================================
-authRoutes.post("/register", authLimiter, register);
-authRoutes.post("/login", authLimiter, login);
-authRoutes.post("/logout", logout);
-authRoutes.post("/forgot-password", authLimiter, forgotPassword);
-authRoutes.post("/reset-password", authLimiter, resetPassword);
-
-// ==========================================
-// Rutas Protegidas de Sesión
-// ==========================================
-authRoutes.get("/me", authMiddleware, getProfile);
+authRoutes.post("/register", authLimiter, (req, res) => authController.register(req, res));
+authRoutes.post("/login", authLimiter, (req, res) => authController.login(req, res));
+authRoutes.post("/logout", (req, res) => authController.logout(req, res));
+authRoutes.post("/forgot-password", authLimiter, (req, res) => authController.forgotPassword(req, res));
+authRoutes.post("/reset-password", authLimiter, (req, res) => authController.resetPassword(req, res));
+authRoutes.get("/me", authMiddleware, (req, res) => authController.getProfile(req, res));
 
 export { authRoutes };
-
-

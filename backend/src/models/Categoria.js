@@ -1,9 +1,3 @@
-/**
- * @file Categoria.js
- * @description Modelo de Mongoose para las categorías de productos eléctricos en ELECTRONOVA.
- * @module models/Categoria
- */
-
 import { Schema, model } from "mongoose";
 
 const CategoriaSchema = new Schema(
@@ -22,4 +16,3 @@ const CategoriaSchema = new Schema(
 const Categoria = model("Categoria", CategoriaSchema);
 
 export { Categoria };
-

@@ -1,9 +1,3 @@
-/**
- * @file Imagen.js
- * @description Modelo de Mongoose para el almacenamiento de imágenes de productos en formato Base64.
- * @module models/Imagen
- */
-
 import { Schema, model } from "mongoose";
 
 const ImagenSchema = new Schema(
@@ -22,4 +16,3 @@ const ImagenSchema = new Schema(
 const Imagen = model("Imagen", ImagenSchema);
 
 export { Imagen };
-

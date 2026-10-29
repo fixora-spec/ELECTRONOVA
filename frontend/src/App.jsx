@@ -18,7 +18,7 @@ import { AdminCategorias } from "./components/pages/AdminCategorias";
 import { AdminProductos } from "./components/pages/AdminProductos";
 import AdminLayout from "./components/templates/AdminLayout";
 import RutaPrivada from "./components/templates/RutaPrivada";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 import ErrorBoundary from "./components/utilities/ErrorBoundary";
 

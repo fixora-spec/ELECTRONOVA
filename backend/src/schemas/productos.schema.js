@@ -1,15 +1,5 @@
-/**
- * @file productos.schema.js
- * @description Esquemas de validación Zod para productos del catálogo ELECTRONOVA.
- * @module schemas/productos
- */
-
 import * as z from "zod";
 
-/**
- * Esquema de validación para creación y actualización de productos.
- * Soporta coerción numérica para payloads multipart/form-data.
- */
 export const productoSchema = z.object({
   nombre: z
     .string({ required_error: "El nombre del producto es obligatorio." })
@@ -28,4 +18,3 @@ export const productoSchema = z.object({
   descripcionCompleta: z.string().optional(),
   estado: z.union([z.boolean(), z.string()]).optional(),
 });
-

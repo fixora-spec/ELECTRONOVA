@@ -19,11 +19,19 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credenciales) => {
     const data = await authService.login(credenciales);
-    const usuarioActual = data.user || data.admin;
 
-    setToken(data.token);
+    if (data.issues && data.issues.length > 0) {
+      const err = new Error(data.issues[0]?.message || 'Credenciales incorrectas.');
+      err.response = { data };
+      throw err;
+    }
+
+    const usuarioActual = data.user || data.admin;
+    const authToken = data.token || data.jwtToken;
+
+    setToken(authToken);
     setUser(usuarioActual);
-    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('token', authToken);
     sessionStorage.setItem('user', JSON.stringify(usuarioActual));
 
     if (usuarioActual?.rol === 'admin' || data.admin) {
@@ -39,13 +47,25 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (datosRegistro) => {
     const data = await authService.register(datosRegistro);
-    const usuarioActual = data.user;
 
-    setToken(data.token);
-    setUser(usuarioActual);
+    if (data.issues && data.issues.length > 0) {
+      const err = new Error(data.issues[0]?.message || 'Error al registrar la cuenta.');
+      err.response = { data };
+      throw err;
+    }
+
+    const usuarioActual = data.user || data.newUser;
+    const authToken = data.token || data.jwtToken;
+
+    if (authToken) {
+      setToken(authToken);
+      sessionStorage.setItem('token', authToken);
+    }
+    if (usuarioActual) {
+      setUser(usuarioActual);
+      sessionStorage.setItem('user', JSON.stringify(usuarioActual));
+    }
     setAdmin(null);
-    sessionStorage.setItem('token', data.token);
-    sessionStorage.setItem('user', JSON.stringify(usuarioActual));
     sessionStorage.removeItem('admin');
 
     return data;
