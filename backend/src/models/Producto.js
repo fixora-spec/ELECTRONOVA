@@ -1,10 +1,3 @@
-/**
- * @file Producto.js
- * @description Modelo de Mongoose para el inventario de productos eléctricos en ELECTRONOVA.
- * Incluye relación virtual hacia la colección Imagen.
- * @module models/Producto
- */
-
 import { Schema, model } from "mongoose";
 
 const ProductoSchema = new Schema(
@@ -30,9 +23,6 @@ const ProductoSchema = new Schema(
   }
 );
 
-/**
- * Relación virtual para popular las imágenes vinculadas a este producto.
- */
 ProductoSchema.virtual("imagenes", {
   ref: "Imagen",
   localField: "_id",
@@ -42,4 +32,3 @@ ProductoSchema.virtual("imagenes", {
 const Producto = model("Producto", ProductoSchema);
 
 export { Producto };
-

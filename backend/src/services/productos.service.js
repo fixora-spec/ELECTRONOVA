@@ -1,21 +1,8 @@
-/**
- * @file productos.service.js
- * @description Capa de servicio para operaciones de base de datos con Productos e Imágenes.
- * @module services/productos
- */
-
 import { Producto } from "../models/Producto.js";
 import { Imagen } from "../models/Imagen.js";
 import { comprimirImagenABase64 } from "../utils/image.util.js";
 
 const productosService = {
-  /**
-   * Obtiene productos con paginación y opción de filtrar por estado activo.
-   *
-   * @param {number} [page=1] - Número de página actual.
-   * @param {number} [limit=10] - Cantidad de productos por página.
-   * @param {boolean} [soloActivos=false] - Si es true, filtra solo productos con estado=true.
-   */
   async getProductos(page = 1, limit = 10, soloActivos = false) {
     const pagina = Math.max(1, Number(page) || 1);
     const limite = Math.max(1, Number(limit) || 10);
@@ -52,10 +39,6 @@ const productosService = {
     return this.getProductos(page, limit);
   },
 
-  /**
-   * Obtiene un producto por ID con su categoría e imágenes relacionadas.
-   * @param {string} id - ID del producto.
-   */
   async getProductoById(id) {
     const producto = await Producto.findById(id)
       .populate("idCategoria")
@@ -72,16 +55,9 @@ const productosService = {
     return this.getProductoById(id);
   },
 
-  /**
-   * Guarda un nuevo producto y comprime sus imágenes asociadas a Base64.
-   *
-   * @param {Object} datosProducto - Campos del producto.
-   * @param {Array<Express.Multer.File>} [archivos=[]] - Archivos de imagen procesados.
-   */
   async crearProducto(datosProducto, archivos = []) {
     if (archivos && archivos.length > 5) {
       throw new Error("No se pueden subir más de 5 imágenes por producto.");
-
     }
 
     const nuevoProducto = new Producto(datosProducto);
@@ -145,10 +121,7 @@ const productosService = {
 
     if (imagenesExistentesRaw !== undefined || (archivos && archivos.length > 0)) {
       const imagenesDB = await Imagen.find({ idProducto: id });
-
-      const imagenesABorrar = imagenesDB.filter(
-        (img) => !urlsExistentes.includes(img.ubicacion)
-      );
+      const imagenesABorrar = imagenesDB.filter((img) => !urlsExistentes.includes(img.ubicacion));
 
       for (const img of imagenesABorrar) {
         await Imagen.findByIdAndDelete(img._id);
@@ -200,8 +173,6 @@ const productosService = {
     const pagina = Math.max(1, Number(page) || 1);
     const limite = Math.max(1, Number(limit) || 10);
     const skip = (pagina - 1) * limite;
-
-    // Sanitización contra ReDoS (Regular Expression Denial of Service)
     const terminoSanitizado = termino.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     const query = {
@@ -241,7 +212,6 @@ const productosService = {
     const pagina = Math.max(1, Number(page) || 1);
     const limite = Math.max(1, Number(limit) || 10);
     const skip = (pagina - 1) * limite;
-
     const query = idCategoria ? { idCategoria } : {};
 
     const [productos, total] = await Promise.all([

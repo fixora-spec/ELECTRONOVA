@@ -1,215 +1,212 @@
-/**
- * @file auth.controller.js
- * @description Controlador de autenticación y gestión de sesiones para Administradores y Clientes.
- * Integra validación de esquemas con Zod y control de errores mediante try...catch.
- * @module controllers/auth
- */
-
 import * as z from "zod";
 import { authService } from "../services/auth.service.js";
-import {
-  registerSchema,
-  loginSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-} from "../schemas/auth.schema.js";
+import { registerUserSchema, loginUserSchema } from "../schemas/auth.schema.js";
 
-/**
- * Registro de un nuevo usuario/cliente en la plataforma.
- * @route POST /auth/register
- */
-const register = async (req, res) => {
-  try {
-    const validatedData = registerSchema.parse({
-      nombre: req.body.nombre,
-      correo: req.body.correo,
-      contraseña: req.body.contraseña || req.body.contrasena || req.body.password,
-    });
+class AuthController {
+  async register(req, res) {
+    const {
+      firstname,
+      lastname,
+      gender,
+      birthdate,
+      email,
+      password,
+      rePassword,
+      role,
+      nombre,
+      correo,
+      contraseña,
+      confirmarContraseña,
+      rol,
+    } = req.body;
 
-    const resultado = await authService.registro({
-      nombre: validatedData.nombre,
-      correo: validatedData.correo.toLowerCase(),
-      contraseña: validatedData.contraseña,
-    });
+    const resolvedFirstname = firstname || (nombre ? nombre.split(" ")[0] : undefined);
+    const resolvedLastname = lastname || (nombre ? nombre.split(" ").slice(1).join(" ") || nombre : undefined);
+    const resolvedEmail = email || correo;
+    const resolvedPassword = password || contraseña;
+    const resolvedRePassword = rePassword || confirmarContraseña || resolvedPassword;
+    const resolvedRole = role || rol || "usuario";
 
-    return res.status(201).json({
-      message: "Registro exitoso. ¡Bienvenido a ELECTRONOVA!",
-      ...resultado,
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        message: error.issues[0]?.message || "Datos de registro inválidos.",
-        issues: error.issues,
+    try {
+      await registerUserSchema.parseAsync({
+        firstname: resolvedFirstname,
+        lastname: resolvedLastname,
+        nombre: nombre || (resolvedFirstname ? `${resolvedFirstname} ${resolvedLastname || ""}`.trim() : undefined),
+        gender,
+        birthdate,
+        email: resolvedEmail,
+        correo: resolvedEmail,
+        password: resolvedPassword,
+        contraseña: resolvedPassword,
+        rePassword: resolvedRePassword,
+        confirmarContraseña: resolvedRePassword,
+        role: resolvedRole,
       });
-    } else if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    } else if (error.name === "ValidationError") {
-      return res.status(400).json({ message: error.message });
-    } else {
-      return res.status(500).json({
-        message: "Error desconocido",
-        error: error.message,
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.json({ issues: error.issues });
+      }
+    }
+
+    try {
+      const newUser = await authService.register({
+        firstname: resolvedFirstname,
+        lastname: resolvedLastname,
+        nombre: nombre || (resolvedFirstname ? `${resolvedFirstname} ${resolvedLastname || ""}`.trim() : "Usuario"),
+        gender,
+        birthdate,
+        email: resolvedEmail,
+        correo: resolvedEmail,
+        password: resolvedPassword,
+        contraseña: resolvedPassword,
+        role: resolvedRole,
+      });
+
+      return res.json({
+        message: "Registro exitoso. ¡Bienvenido a ELECTRONOVA!",
+        newUser,
+        user: newUser,
+        token: newUser.token,
+      });
+    } catch (error) {
+      if (error.code === "P2002" || error.code === 11000 || error.status === 400) {
+        return res.json({
+          issues: [
+            {
+              expected: "string",
+              code: "unique",
+              path: ["email"],
+              message: "El email ya esta registrado",
+            },
+          ],
+        });
+      }
+      return res.json({
+        issues: [
+          {
+            expected: "any",
+            code: "any",
+            path: ["any"],
+            message: "Error desconocido",
+          },
+        ],
       });
     }
   }
-};
 
-/**
- * Inicio de sesión unificado. Detecta automáticamente si la cuenta es Administrador o Cliente.
- * @route POST /auth/login
- */
-const login = async (req, res) => {
-  try {
-    const validatedData = loginSchema.parse({
-      correo: req.body.correo,
-      contraseña: req.body.contraseña || req.body.contrasena || req.body.password,
-      recordarme: Boolean(req.body.recordarme),
-    });
+  async login(req, res) {
+    const { email, password, correo, contraseña, recordarme } = req.body;
+    const resolvedEmail = email || correo;
+    const resolvedPassword = password || contraseña;
 
-    const resultado = await authService.login(
-      validatedData.correo.toLowerCase(),
-      validatedData.contraseña,
-      validatedData.recordarme
-    );
-
-    return res.status(200).json({
-      message: "Inicio de sesión exitoso",
-      ...resultado,
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        message: error.issues[0]?.message || "Datos de acceso inválidos.",
-        issues: error.issues,
+    try {
+      await loginUserSchema.parseAsync({
+        email: resolvedEmail,
+        password: resolvedPassword,
+        correo: resolvedEmail,
+        contraseña: resolvedPassword,
+        recordarme: Boolean(recordarme),
       });
-    } else if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    } else {
-      return res.status(500).json({
-        message: "Error desconocido",
-        error: error.message,
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.json({ issues: error.issues });
+      }
+    }
+
+    const result = await authService.login({
+      email: resolvedEmail,
+      password: resolvedPassword,
+      recordarme: Boolean(recordarme),
+      browser: req.headers["user-agent"] || "",
+      ip: req.ip || "",
+    });
+
+    if (result.error === "INVALID_CREDENTIALS") {
+      return res.json({
+        issues: [
+          {
+            expected: "any",
+            code: "any",
+            path: ["email"],
+            message: "Email y/o contraseña incorrectos",
+          },
+        ],
       });
     }
-  }
-};
 
-/**
- * Cierre de sesión. Notifica al cliente para que elimine el token en su almacenamiento local.
- * @route POST /auth/logout
- */
-const logout = async (req, res) => {
-  try {
-    return res.status(200).json({
-      message: "Cierre de sesión exitoso. Por favor, elimine el token en el cliente.",
+    const { credentials, jwtToken, refreshToken } = result;
+
+    const NODE_ENV = process.env.NODE_ENV || "developer";
+    res.cookie("authToken", jwtToken, {
+      httpOnly: NODE_ENV === "developer" ? false : true,
+      secure: NODE_ENV === "developer" ? false : true,
+      sameSite: "lax",
     });
-  } catch (error) {
-    if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    } else {
-      return res.status(500).json({
-        message: "Error desconocido",
-        error: error.message,
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: NODE_ENV === "developer" ? false : true,
+      secure: NODE_ENV === "developer" ? false : true,
+      sameSite: "lax",
+    });
+
+    return res.json({
+      message: `Bienvenido, ${credentials.email}`,
+      token: jwtToken,
+      jwtToken,
+      refreshToken,
+      user: result.user || credentials,
+      admin: result.admin || null,
+      credentials,
+    });
+  }
+
+  logout(req, res) {
+    res.clearCookie("authToken");
+    res.clearCookie("refreshToken");
+    return res.json({ message: "Sesión cerrada correctamente" });
+  }
+
+  async getProfile(req, res) {
+    try {
+      const user = await authService.obtenerPerfil(req.user?.id || req.admin?.id);
+      return res.json({
+        message: "Perfil obtenido exitosamente.",
+        user,
+        admin: user.rol === "admin" ? user : null,
       });
+    } catch (error) {
+      return res.status(error.status || 500).json({ message: error.message || "Error desconocido" });
     }
   }
-};
 
-/**
- * Obtiene el perfil de la cuenta autenticada según el token JWT suministrado.
- * @route GET /auth/me
- */
-const getProfile = async (req, res) => {
-  try {
-    const user = await authService.obtenerPerfil(req.user?.id || req.admin?.id);
-    return res.status(200).json({
-      message: "Perfil obtenido exitosamente.",
-      user,
-      admin: user.rol === "admin" ? user : null,
-    });
-  } catch (error) {
-    if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    } else if (error.name === "CastError") {
-      return res.status(400).json({ message: "ID de usuario inválido." });
-    } else {
-      return res.status(500).json({
-        message: "Error desconocido",
-        error: error.message,
-      });
+  async forgotPassword(req, res) {
+    try {
+      const email = req.body.email || req.body.correo;
+      await authService.solicitarRecuperacion(email);
+      return res.json({ message: "Se ha enviado un enlace de recuperación a su correo electrónico." });
+    } catch (error) {
+      return res.status(error.status || 500).json({ message: error.message || "Error al procesar la solicitud" });
     }
   }
-};
 
-/**
- * Solicita enlace temporal para recuperar contraseña por correo electrónico.
- * @route POST /auth/forgot-password
- */
-const forgotPassword = async (req, res) => {
-  try {
-    const validatedData = forgotPasswordSchema.parse({
-      correo: req.body.correo,
-    });
-
-    await authService.solicitarRecuperacion(validatedData.correo.toLowerCase());
-    return res.status(200).json({
-      message: "Se ha enviado un enlace de recuperación a su correo electrónico.",
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        message: error.issues[0]?.message || "Correo inválido.",
-        issues: error.issues,
-      });
-    } else if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    } else {
-      return res.status(500).json({
-        message: "Error desconocido",
-        error: error.message,
-      });
+  async resetPassword(req, res) {
+    try {
+      const { id, token, password, nuevaContrasena } = req.body;
+      await authService.restablecerContraseña(id, token, password || nuevaContrasena);
+      return res.json({ message: "Contraseña actualizada exitosamente." });
+    } catch (error) {
+      return res.status(error.status || 500).json({ message: error.message || "Error al restablecer la contraseña" });
     }
   }
-};
+}
 
-/**
- * Restablece la contraseña utilizando el token firmado y enviado al correo.
- * @route POST /auth/reset-password
- */
-const resetPassword = async (req, res) => {
-  try {
-    const validatedData = resetPasswordSchema.parse({
-      id: req.body.id,
-      token: req.body.token,
-      nuevaContrasena: req.body.nuevaContrasena || req.body.nuevaContraseña || req.body.password,
-    });
+const authController = new AuthController();
 
-    await authService.restablecerContraseña(
-      validatedData.id,
-      validatedData.token,
-      validatedData.nuevaContrasena
-    );
-    return res.status(200).json({ message: "Contraseña actualizada exitosamente." });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        message: error.issues[0]?.message || "Datos para restablecer contraseña inválidos.",
-        issues: error.issues,
-      });
-    } else if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    } else if (error.name === "CastError") {
-      return res.status(400).json({ message: "ID de usuario inválido." });
-    } else {
-      return res.status(500).json({
-        message: "Error desconocido",
-        error: error.message,
-      });
-    }
-  }
-};
+export { authController, AuthController };
 
-export { register, login, logout, getProfile, forgotPassword, resetPassword };
-
-
-
+export const register = (req, res) => authController.register(req, res);
+export const login = (req, res) => authController.login(req, res);
+export const logout = (req, res) => authController.logout(req, res);
+export const getProfile = (req, res) => authController.getProfile(req, res);
+export const forgotPassword = (req, res) => authController.forgotPassword(req, res);
+export const resetPassword = (req, res) => authController.resetPassword(req, res);

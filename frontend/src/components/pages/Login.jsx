@@ -36,7 +36,8 @@ function Login() {
         navigate('/productos');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Credenciales incorrectas. Verifica tus datos.');
+      const issueMsg = err.response?.data?.issues?.[0]?.message;
+      setError(issueMsg || err.response?.data?.message || err.message || 'Credenciales incorrectas. Verifica tus datos.');
     } finally {
       setLoading(false);
     }

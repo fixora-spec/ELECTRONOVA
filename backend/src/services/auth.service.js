@@ -1,142 +1,187 @@
-/**
- * @file auth.service.js
- * @description Capa de servicio para lógica de autenticación, generación de tokens JWT y recuperación de contraseñas.
- * @module services/auth
- */
-
 import jwt from "jsonwebtoken";
 import { Administrador } from "../models/Administrador.js";
 import { Usuario } from "../models/Usuario.js";
 import { enviarCorreoRecuperacion } from "../utils/email.util.js";
 
 const authService = {
-  /**
-   * Registra un nuevo usuario/cliente en la base de datos y genera su token JWT.
-   *
-   * @param {Object} param0
-   * @param {string} param0.nombre - Nombre completo del usuario.
-   * @param {string} param0.correo - Correo electrónico único.
-   * @param {string} param0.contraseña - Contraseña en texto plano.
-   * @returns {Promise<{token: string, user: Object}>}
-   */
-  async registro({ nombre, correo, contraseña }) {
-    const adminExiste = await Administrador.findOne({ correo });
-    const usuarioExiste = await Usuario.findOne({ correo });
+  async register(datos) {
+    const {
+      firstname,
+      lastname,
+      nombre,
+      gender,
+      birthdate,
+      email,
+      correo,
+      password,
+      contraseña,
+      role,
+      rol,
+    } = datos;
+
+    const emailFinal = (email || correo || "").toLowerCase().trim();
+    const passwordFinal = password || contraseña;
+    const nombreFinal =
+      nombre ||
+      [firstname, lastname].filter(Boolean).join(" ") ||
+      "Usuario";
+
+    let rolFinal = "usuario";
+    const rolInput = (role || rol || "").toLowerCase();
+    if (rolInput === "admin" || rolInput === "administrator") {
+      rolFinal = "admin";
+    }
+
+    const adminExiste = await Administrador.findOne({ correo: emailFinal });
+    const usuarioExiste = await Usuario.findOne({ correo: emailFinal });
 
     if (adminExiste || usuarioExiste) {
-      const err = new Error("El correo electrónico ya se encuentra registrado.");
+      const err = new Error("El email ya esta registrado");
+      err.code = "P2002";
       err.status = 400;
       throw err;
     }
 
     const nuevoUsuario = new Usuario({
-      nombre,
-      correo,
-      contraseña,
-      rol: "usuario",
+      nombre: nombreFinal,
+      firstname,
+      lastname,
+      gender,
+      birthdate,
+      correo: emailFinal,
+      contraseña: passwordFinal,
+      rol: rolFinal,
     });
 
     await nuevoUsuario.save();
 
+    const jwtSecret = process.env.JWT_SECRET || "super_secreto_desarrollo_2026";
     const token = jwt.sign(
-      { id: nuevoUsuario._id, correo: nuevoUsuario.correo, rol: "usuario" },
-      process.env.JWT_SECRET || "super_secreto_desarrollo_2026",
+      { id: nuevoUsuario._id, correo: nuevoUsuario.correo, rol: nuevoUsuario.rol },
+      jwtSecret,
       { expiresIn: "7d" }
     );
 
     return {
+      id: nuevoUsuario._id,
+      _id: nuevoUsuario._id,
+      nombre: nuevoUsuario.nombre,
+      firstname: nuevoUsuario.firstname,
+      lastname: nuevoUsuario.lastname,
+      email: nuevoUsuario.correo,
+      correo: nuevoUsuario.correo,
+      role: nuevoUsuario.rol === "admin" ? "ADMINISTRATOR" : "CLIENTE",
+      rol: nuevoUsuario.rol,
       token,
-      user: {
-        id: nuevoUsuario._id,
-        nombre: nuevoUsuario.nombre,
-        correo: nuevoUsuario.correo,
-        rol: "usuario",
-      },
     };
   },
 
-  /**
-   * Inicio de sesión unificado. Detecta automáticamente si las credenciales pertenecen a un Administrador o a un Cliente.
-   *
-   * @param {string} correo - Correo registrado.
-   * @param {string} contraseña - Contraseña ingresada.
-   * @param {boolean} [recordarme=false] - Si es true, el token durará 30 días en lugar de 1 día.
-   * @returns {Promise<Object>} Datos del usuario y token JWT.
-   */
-  async login(correo, contraseña, recordarme = false) {
-    const duracionToken = recordarme ? "30d" : "1d";
-
-    // 1. Verificar si es Administrador
-    const admin = await Administrador.findOne({ correo });
-    if (admin) {
-      const esValida = await admin.comparePassword(contraseña);
-      if (!esValida) {
-        const err = new Error("Credenciales inválidas.");
-        err.status = 401;
-        throw err;
-      }
-
-      const token = jwt.sign(
-        { id: admin._id, correo: admin.correo, rol: "admin" },
-        process.env.JWT_SECRET || "super_secreto_desarrollo_2026",
-        { expiresIn: duracionToken }
-      );
-
-      return {
-        token,
-        user: {
-          id: admin._id,
-          nombre: admin.nombre,
-          correo: admin.correo,
-          rol: "admin",
-        },
-        admin: {
-          id: admin._id,
-          nombre: admin.nombre,
-          correo: admin.correo,
-          rol: "admin",
-        },
-      };
-    }
-
-    // 2. Si no es admin, verificar si es Usuario/Cliente
-    const usuario = await Usuario.findOne({ correo });
-    if (usuario) {
-      const esValida = await usuario.comparePassword(contraseña);
-      if (!esValida) {
-        const err = new Error("Credenciales inválidas.");
-        err.status = 401;
-        throw err;
-      }
-
-      const token = jwt.sign(
-        { id: usuario._id, correo: usuario.correo, rol: usuario.rol || "usuario" },
-        process.env.JWT_SECRET || "super_secreto_desarrollo_2026",
-        { expiresIn: duracionToken }
-      );
-
-      return {
-        token,
-        user: {
-          id: usuario._id,
-          nombre: usuario.nombre,
-          correo: usuario.correo,
-          rol: usuario.rol || "usuario",
-        },
-      };
-    }
-
-    // 3. Ni admin ni usuario encontrado
-    const err = new Error("Credenciales inválidas.");
-    err.status = 401;
-    throw err;
+  async registro(datos) {
+    return this.register(datos);
   },
 
-  /**
-   * Obtiene la información del perfil del usuario autenticado sin exponer la contraseña.
-   *
-   * @param {string} id - ID del usuario/administrador.
-   */
+  async login(credenciales, passwordParam, recordarmeParam = false) {
+    let email = "";
+    let password = "";
+    let recordarme = false;
+
+    if (typeof credenciales === "object" && credenciales !== null) {
+      email = (credenciales.email || credenciales.correo || "").toLowerCase().trim();
+      password = credenciales.password || credenciales.contraseña || "";
+      recordarme = Boolean(credenciales.recordarme);
+    } else {
+      email = String(credenciales || "").toLowerCase().trim();
+      password = passwordParam || "";
+      recordarme = Boolean(recordarmeParam);
+    }
+
+    const duracionToken = recordarme ? "30d" : "1d";
+    const jwtSecret = process.env.JWT_SECRET || "super_secreto_desarrollo_2026";
+
+    // 1. Verificar Administrador
+    const admin = await Administrador.findOne({ correo: email });
+    if (admin) {
+      const esValida = await admin.comparePassword(password);
+      if (!esValida) {
+        return { error: "INVALID_CREDENTIALS" };
+      }
+
+      const jwtToken = jwt.sign(
+        { id: admin._id, correo: admin.correo, email: admin.correo, rol: "admin", role: "ADMINISTRATOR" },
+        jwtSecret,
+        { expiresIn: duracionToken }
+      );
+
+      const refreshToken = jwt.sign(
+        { id: admin._id, type: "refresh" },
+        jwtSecret,
+        { expiresIn: "30d" }
+      );
+
+      const credentials = {
+        id: admin._id,
+        nombre: admin.nombre,
+        email: admin.correo,
+        correo: admin.correo,
+        role: "ADMINISTRATOR",
+        rol: "admin",
+      };
+
+      return {
+        credentials,
+        jwtToken,
+        refreshToken,
+        token: jwtToken,
+        user: credentials,
+        admin: credentials,
+      };
+    }
+
+    // 2. Verificar Usuario / Cliente
+    const usuario = await Usuario.findOne({ correo: email });
+    if (usuario) {
+      const esValida = await usuario.comparePassword(password);
+      if (!esValida) {
+        return { error: "INVALID_CREDENTIALS" };
+      }
+
+      const rol = usuario.rol || "usuario";
+      const roleStr = rol === "admin" ? "ADMINISTRATOR" : "CLIENTE";
+
+      const jwtToken = jwt.sign(
+        { id: usuario._id, correo: usuario.correo, email: usuario.correo, rol, role: roleStr },
+        jwtSecret,
+        { expiresIn: duracionToken }
+      );
+
+      const refreshToken = jwt.sign(
+        { id: usuario._id, type: "refresh" },
+        jwtSecret,
+        { expiresIn: "30d" }
+      );
+
+      const credentials = {
+        id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.correo,
+        correo: usuario.correo,
+        role: roleStr,
+        rol,
+      };
+
+      return {
+        credentials,
+        jwtToken,
+        refreshToken,
+        token: jwtToken,
+        user: credentials,
+        admin: rol === "admin" ? credentials : null,
+      };
+    }
+
+    return { error: "INVALID_CREDENTIALS" };
+  },
+
   async obtenerPerfil(id) {
     let cuenta = await Administrador.findById(id).select("-contraseña");
     let rol = "admin";
@@ -156,19 +201,17 @@ const authService = {
       id: cuenta._id,
       nombre: cuenta.nombre,
       correo: cuenta.correo,
+      email: cuenta.correo,
       rol,
+      role: rol === "admin" ? "ADMINISTRATOR" : "CLIENTE",
     };
   },
 
-  /**
-   * Genera un token firmado temporal y envía el enlace de recuperación al correo.
-   *
-   * @param {string} correo - Correo registrado.
-   */
   async solicitarRecuperacion(correo) {
-    let cuenta = await Administrador.findOne({ correo });
+    const emailNormalizado = (correo || "").toLowerCase().trim();
+    let cuenta = await Administrador.findOne({ correo: emailNormalizado });
     if (!cuenta) {
-      cuenta = await Usuario.findOne({ correo });
+      cuenta = await Usuario.findOne({ correo: emailNormalizado });
     }
 
     if (!cuenta) {
@@ -192,13 +235,6 @@ const authService = {
     });
   },
 
-  /**
-   * Valida el token temporal y actualiza la contraseña del usuario/administrador.
-   *
-   * @param {string} id - ID de la cuenta.
-   * @param {string} token - Token de recuperación.
-   * @param {string} nuevaContrasena - Nueva contraseña en texto plano.
-   */
   async restablecerContraseña(id, token, nuevaContrasena) {
     let cuenta = await Administrador.findById(id);
     if (!cuenta) {
@@ -227,4 +263,3 @@ const authService = {
 };
 
 export { authService };
-

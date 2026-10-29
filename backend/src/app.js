@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
 import { apiLimiter } from "./middlewares/rateLimiter.middleware.js";
@@ -15,18 +16,15 @@ dotenv.config();
 
 const app = express();
 
-// Ocultar cabecera que delata tecnología Express
 app.disable("x-powered-by");
 
-// 1. Cabeceras HTTP de seguridad avanzada (CSP, HSTS, Clickjacking, MIME-Sniffing)
 app.use(
   helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }, // Permite servir imágenes y recursos al frontend
-    contentSecurityPolicy: false,                          // Para APIs REST puras
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: false,
   })
 );
 
-// 2. Control de Acceso CORS Estricto
 const allowedOrigins = [
   process.env.ALLOWED_ORIGIN,
   process.env.FRONTEND_URL,
@@ -37,11 +35,10 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Permitir peticiones sin origen (por ejemplo Postman, Bruno, apps móviles o del mismo servidor)
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
-      return callback(new Error("Bloqueado por política CORS: origen no autorizado"));
+      return callback(new Error("Bloqueado por política CORS"));
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -49,11 +46,10 @@ app.use(
   })
 );
 
-// 3. Limitación de tamaño de payload contra ataques de saturación de memoria (DoS)
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+app.use(cookieParser());
 
-// 4. Sanitización contra NoSQL Injection (Compatible con Express 5 donde req.query es solo getter)
 app.use((req, res, next) => {
   try {
     if (req.body && typeof req.body === "object") mongoSanitize.sanitize(req.body);
@@ -65,14 +61,10 @@ app.use((req, res, next) => {
   }
 });
 
-// 5. Limitador global de peticiones (Rate Limiting)
 app.use(apiLimiter);
 
-// Rutas
 app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "API ELECTRONOVA operativa y asegurada",
-  });
+  res.status(200).json({ message: "API ELECTRONOVA operativa" });
 });
 
 app.use("/auth", authRoutes);
@@ -81,7 +73,6 @@ app.use("/categorias", categoriasRoutes);
 app.use("/empresa", empresaRoutes);
 app.use("/usuarios", usuariosRoutes);
 
-// Manejo de ruta no encontrada (404)
 app.use((req, res) => {
   res.status(404).json({
     error: "Not Found",
@@ -89,23 +80,18 @@ app.use((req, res) => {
   });
 });
 
-// Manejo global de errores (500)
 app.use((err, req, res, next) => {
   console.error("[Error]:", err.message || err);
   if (err.status) {
-    return res.status(err.status).json({
-      message: err.message,
-    });
-  } else if (err.name === "MulterError") {
-    return res.status(400).json({
-      message: err.message,
-    });
-  } else {
-    return res.status(500).json({
-      message: "Error desconocido",
-      error: err.message || "Error desconocido",
-    });
+    return res.status(err.status).json({ message: err.message });
   }
+  if (err.name === "MulterError") {
+    return res.status(400).json({ message: err.message });
+  }
+  return res.status(500).json({
+    message: "Error desconocido",
+    error: err.message || "Error desconocido",
+  });
 });
 
 export { app };

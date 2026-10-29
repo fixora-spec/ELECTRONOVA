@@ -1,9 +1,3 @@
-/**
- * @file Empresa.js
- * @description Modelo de Mongoose para la configuración e información institucional de ELECTRONOVA.
- * @module models/Empresa
- */
-
 import { Schema, model } from "mongoose";
 
 const EmpresaSchema = new Schema(
@@ -24,4 +18,3 @@ const EmpresaSchema = new Schema(
 const Empresa = model("Empresa", EmpresaSchema);
 
 export { Empresa };
-

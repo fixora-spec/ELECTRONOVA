@@ -7,7 +7,8 @@ import {
   Package,
   Building2,
   Mail,
-  LogOut
+  LogOut,
+  Shield
 } from 'lucide-react';
 
 import { Link, NavLink } from 'react-router-dom';
@@ -111,37 +112,50 @@ const Encabezado = () => {
                   className="btn-login-header"
                   onClick={closeMenu}
                 >
-                  <User size={22}/>
+                  <User size={20}/>
                   Iniciar sesión
                 </Link>
               ) : isAdmin ? (
-                <Link
-                  to="/admin/dashboard"
-                  className="btn-login-header"
-                  onClick={closeMenu}
-                >
-                  <User size={22}/>
-                  Panel Admin
-                </Link>
+                <div className="usuario-mobile-card">
+                  <div className="usuario-mobile-info">
+                    <div className="usuario-avatar-circulo avatar-admin">
+                      <Shield size={16}/>
+                    </div>
+                    <div>
+                      <div className="usuario-nombre-mobile">{user?.nombre || 'Administrador'}</div>
+                      <span className="usuario-badge-mobile">Administrador</span>
+                    </div>
+                  </div>
+                  <div className="usuario-mobile-botones">
+                    <Link
+                      to="/admin/dashboard"
+                      className="btn-panel-mobile"
+                      onClick={closeMenu}
+                    >
+                      Panel Admin
+                    </Link>
+                    <button
+                      onClick={() => { logout(); closeMenu(); }}
+                      className="btn-salir-mobile"
+                    >
+                      <LogOut size={16} /> Salir
+                    </button>
+                  </div>
+                </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px 0' }}>
-                  <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--primary-blue, #0d284a)' }}>
-                    Hola, {user?.nombre?.split(' ')[0] || 'Usuario'}
-                  </span>
+                <div className="usuario-mobile-card">
+                  <div className="usuario-mobile-info">
+                    <div className="usuario-avatar-circulo">
+                      {(user?.nombre || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="usuario-nombre-mobile">{user?.nombre || 'Usuario'}</div>
+                      <span className="usuario-email-mobile">{user?.correo || user?.email || 'Cliente'}</span>
+                    </div>
+                  </div>
                   <button
                     onClick={() => { logout(); closeMenu(); }}
-                    style={{ 
-                      display: 'inline-flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
-                      gap: '6px',
-                      background: '#f3f4f6', 
-                      border: '1px solid #ddd', 
-                      borderRadius: '6px', 
-                      padding: '8px 12px', 
-                      cursor: 'pointer',
-                      fontWeight: '500'
-                    }}
+                    className="btn-salir-mobile"
                   >
                     <LogOut size={16} /> Cerrar sesión
                   </button>
@@ -165,40 +179,47 @@ const Encabezado = () => {
                   to="/login"
                   className="btn-login-header"
                 >
-                  <User size={22}/>
+                  <User size={18}/>
                   <span className="mostrar-desktop">Iniciar sesión</span>
                 </Link>
               ) : isAdmin ? (
-                <Link
-                  to="/admin/dashboard"
-                  className="btn-login-header"
-                >
-                  <User size={22}/>
-                  <span className="mostrar-desktop">Panel Admin</span>
-                </Link>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span className="mostrar-desktop" style={{ fontSize: '0.9rem', color: '#1f2937', fontWeight: '600' }}>
-                    Hola, {user?.nombre?.split(' ')[0] || 'Usuario'}
-                  </span>
+                <div className="usuario-sesion-header">
+                  <Link to="/admin/dashboard" className="usuario-info-pill usuario-info-link" title="Ir al Panel de Administrador">
+                    <div className="usuario-avatar-circulo avatar-admin">
+                      <Shield size={14}/>
+                    </div>
+                    <div className="usuario-textos">
+                      <span className="usuario-saludo">Admin:</span>
+                      <span className="usuario-nombre">{user?.nombre?.split(' ')[0] || 'Panel'}</span>
+                    </div>
+                  </Link>
                   <button
                     onClick={logout}
                     title="Cerrar sesión"
-                    style={{ 
-                      display: 'inline-flex', 
-                      alignItems: 'center', 
-                      gap: '4px',
-                      background: 'transparent', 
-                      border: '1px solid #d1d5db', 
-                      borderRadius: '6px', 
-                      padding: '6px 10px', 
-                      cursor: 'pointer',
-                      fontSize: '0.85rem',
-                      color: '#4b5563'
-                    }}
+                    className="btn-salir-header"
                   >
-                    <LogOut size={15} />
-                    <span className="mostrar-desktop">Salir</span>
+                    <LogOut size={14} className="icono-salir" />
+                    <span>Salir</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="usuario-sesion-header">
+                  <div className="usuario-info-pill">
+                    <div className="usuario-avatar-circulo">
+                      {(user?.nombre || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div className="usuario-textos">
+                      <span className="usuario-saludo">Hola,</span>
+                      <span className="usuario-nombre">{user?.nombre?.split(' ')[0] || 'Usuario'}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={logout}
+                    title="Cerrar sesión"
+                    className="btn-salir-header"
+                  >
+                    <LogOut size={14} className="icono-salir" />
+                    <span>Salir</span>
                   </button>
                 </div>
               )}
