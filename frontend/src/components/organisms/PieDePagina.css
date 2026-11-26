@@ -1,3 +1,4 @@
+/* Estructura general */
 .pie-pagina {
   background-color: var(--primary-blue);
   color: #e0e0e0;
@@ -10,6 +11,14 @@
   gap: 2rem;
   padding: 0 5%;
   margin-bottom: 3rem;
+}
+
+/* Marca y redes sociales */
+.pie-logo-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .pie-logo {
@@ -68,6 +77,7 @@
   border-color: var(--accent-yellow);
 }
 
+/* Enlaces y contacto */
 .pie-titulo {
   color: white;
   font-size: 1.1rem;
@@ -110,6 +120,7 @@
   margin-top: 0.1rem;
 }
 
+/* Tarjeta de ubicación */
 .pie-columna-mapa {
   display: flex;
   justify-content: flex-end;
@@ -150,6 +161,7 @@
   text-decoration: underline;
 }
 
+/* Barra inferior */
 .pie-pagina-inferior {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 1.5rem 5%;
@@ -160,6 +172,7 @@
   opacity: 0.7;
 }
 
+/* Responsive */
 @media (max-width: 900px) {
   .pie-pagina-contenedor {
     grid-template-columns: 1fr 1fr;

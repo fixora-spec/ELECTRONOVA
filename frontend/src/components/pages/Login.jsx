@@ -1,7 +1,9 @@
+// Inicio de sesión
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Lock, Mail, Settings, Folder, Users, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { esRolAdmin } from '../../context/AuthContext';
+import { Lock, Mail, Settings, Folder, Users, Eye, EyeOff,} from 'lucide-react';
 import './Login.css';
 
 function Login() {
@@ -14,6 +16,7 @@ function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // Autenticación y redirección
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -21,16 +24,14 @@ function Login() {
 
     try {
       const data = await login({ correo, contraseña, recordarme });
-      
+
       if (recordarme) {
         localStorage.setItem('recordar_correo', correo);
       } else {
         localStorage.removeItem('recordar_correo');
       }
 
-      // Si es administrador va a su panel, si es usuario común va al catálogo de productos
-      const esAdmin = data.user?.rol === 'admin' || data.admin;
-      if (esAdmin) {
+      if (esRolAdmin(data.user?.rol) || data.admin) {
         navigate('/admin/dashboard');
       } else {
         navigate('/productos');
@@ -45,11 +46,12 @@ function Login() {
 
   return (
     <div className="login-pagina-split">
+      {/* Panel informativo */}
       <div className="login-panel-izquierdo">
         <div className="panel-izq-contenido">
-          <h1>Bienvenido a <br/><span className="text-yellow">ELECTRONOVA</span></h1>
+          <h1>Bienvenido a <br /><span className="text-yellow">ELECTRONOVA</span></h1>
           <p className="subtitulo-panel">Catálogo de productos y equipamiento eléctrico industrial y domiciliario.</p>
-          
+
           <div className="divisor-amarillo"></div>
 
           <div className="caracteristicas-lista">
@@ -60,7 +62,7 @@ function Login() {
                 <p>Acceso seguro para administración de catálogo y stock.</p>
               </div>
             </div>
-            
+
             <div className="caracteristica-item">
               <div className="icono-circulo"><Folder size={20} /></div>
               <div>
@@ -68,7 +70,7 @@ function Login() {
                 <p>Equipos, cables, luminarias y componentes industriales.</p>
               </div>
             </div>
-            
+
             <div className="caracteristica-item">
               <div className="icono-circulo"><Users size={20} /></div>
               <div>
@@ -79,50 +81,51 @@ function Login() {
           </div>
 
           <div className="slogan-inferior">
-            <span className="slogan-cursiva">Soluciones eléctricas<br/>para un mejor futuro</span>
+            <span className="slogan-cursiva">Soluciones eléctricas<br />para un mejor futuro</span>
           </div>
         </div>
       </div>
 
+      {/* Formulario de acceso */}
       <div className="login-panel-derecho">
         <div className="login-caja-blanca">
           <div className="login-header-form">
             <div className="logo-electronova-form">
-               <span className="logo-foco">💡</span> ELECTRONOVA
+              <span className="logo-foco">💡</span> ELECTRONOVA
             </div>
             <span className="logo-slogan-form">Catálogo de Productos Eléctricos</span>
-            
+
             <h2>Iniciar sesión</h2>
           </div>
-          
+
           {error && <div className="login-error-msg">{error}</div>}
-          
+
           <form onSubmit={handleSubmit} className="form-login-split">
             <div className="input-group-split">
               <div className="input-wrapper">
                 <Mail size={18} className="input-icon-left" />
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   placeholder="Correo electrónico"
                   value={correo}
                   onChange={(e) => setCorreo(e.target.value)}
-                  required 
+                  required
                 />
               </div>
             </div>
-            
+
             <div className="input-group-split">
               <div className="input-wrapper">
                 <Lock size={18} className="input-icon-left" />
-                <input 
-                  type={mostrarPass ? "text" : "password"}
+                <input
+                  type={mostrarPass ? 'text' : 'password'}
                   placeholder="Contraseña"
                   value={contraseña}
                   onChange={(e) => setContraseña(e.target.value)}
-                  required 
+                  required
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn-ver-pass"
                   onClick={() => setMostrarPass(!mostrarPass)}
                 >
@@ -130,11 +133,11 @@ function Login() {
                 </button>
               </div>
             </div>
-            
+
             <div className="form-options">
               <label className="checkbox-container">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={recordarme}
                   onChange={(e) => setRecordarme(e.target.checked)}
                 />
@@ -146,9 +149,9 @@ function Login() {
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
-            
+
             <button type="submit" className="btn-ingresar-split" disabled={loading}>
-               {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </button>
 
             <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.9rem', color: '#666' }}>
@@ -159,19 +162,19 @@ function Login() {
             </div>
 
             <div style={{ borderTop: '1px solid #e5e7eb', marginTop: '16px', paddingTop: '16px', textAlign: 'center' }}>
-              <Link 
-                to="/productos" 
-                style={{ 
-                  display: 'inline-flex', 
-                  alignItems: 'center', 
-                  gap: '6px', 
-                  color: '#4b5563', 
-                  fontSize: '0.9rem', 
+              <Link
+                to="/productos"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  color: '#4b5563',
+                  fontSize: '0.9rem',
                   textDecoration: 'none',
                   fontWeight: '500'
                 }}
               >
-                Continuar como invitado <ArrowRight size={16} />
+                Continuar como invitado
               </Link>
             </div>
           </form>

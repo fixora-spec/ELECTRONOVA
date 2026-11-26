@@ -1,3 +1,4 @@
+/* Variables y base de contacto */
 .contacto-page {
   --contacto-azul: var(--primary-blue, #082d5b);
   --contacto-azul-hover: var(--secondary-blue, #0b3d7a);
@@ -17,6 +18,7 @@
 .contacto-page svg { flex-shrink: 0; }
 .contacto-contenedor { width: min(1200px, calc(100% - 64px)); margin-inline: auto; }
 
+/* Sección Hero */
 .contacto-hero {
   position: relative;
   overflow: hidden;
@@ -55,6 +57,7 @@
 .contacto-temas li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #d7e6f6; }
 .contacto-temas svg { width: 17px; height: 17px; color: var(--contacto-amarillo); }
 
+/* Datos y formulario */
 .contacto-cuerpo { padding-block: 32px 64px; }
 .contacto-datos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-bottom: 32px; }
 .contacto-dato { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 23px 20px; background: #fff; border: 1px solid var(--contacto-borde); border-radius: 14px; }
@@ -93,6 +96,7 @@
 .contacto-estado svg { width: 19px; height: 19px; }
 .contacto-page .contacto-estado a { text-decoration: underline; font-weight: 700; text-underline-offset: 3px; }
 
+/* Panel lateral y mapa */
 .contacto-lateral { min-width: 0; display: grid; gap: 22px; }
 .contacto-ubicacion { overflow: hidden; background: #fff; border: 1px solid var(--contacto-borde); border-radius: 18px; }
 .contacto-ubicacion-cabecera { padding: 26px 26px 21px; }
@@ -112,6 +116,7 @@
 .contacto-page .contacto-boton-blanco { color: var(--contacto-azul); background: #fff; margin-top: 20px; width: 100%; padding-block: 12px; min-height: 46px; }
 .contacto-boton-blanco:hover { background: #eaf1f9; }
 
+/* Responsive */
 @media (max-width: 1080px) {
   .contacto-hero-grid { gap: 36px; }
   .contacto-dato { padding: 20px 15px; gap: 11px; }

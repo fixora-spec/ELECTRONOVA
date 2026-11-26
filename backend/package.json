@@ -4,7 +4,7 @@
   "description": "Backend del sistema ELECTRONOVA",
   "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon src/server.js",
+    "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "seed": "node src/scripts/seed.js",
     "clear": "node src/scripts/clear.js"
@@ -20,7 +20,6 @@
   "type": "module",
   "dependencies": {
     "argon2": "^0.45.1",
-    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -34,8 +33,5 @@
     "nodemailer": "^10.0.9",
     "sharp": "^0.35.4",
     "zod": "^4.6.7"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.9"
   }
 }

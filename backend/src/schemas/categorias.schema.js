@@ -1,5 +1,6 @@
 import * as z from "zod";
 
+// Esquema de categoría
 export const categoriaSchema = z.object({
   nombre: z
     .string({ required_error: "El nombre de la categoría es obligatorio." })

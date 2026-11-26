@@ -1,913 +1,298 @@
-/* ===============================
-   MODAL PRODUCTO DETALLE
-   VERSION PROFESIONAL RESPONSIVE
-================================ */
-
-
+/* Contenedor y animaciones del modal */
 .modal-detalle-overlay {
-
   position: fixed;
-
   inset: 0;
-
-  background:
-  rgba(15,23,42,.65);
-
+  background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(8px);
-
-  display:flex;
-
-  justify-content:center;
-
-  align-items:center;
-
-  padding:20px;
-
-  z-index:1000;
-
-  animation:fadeModal .3s ease;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+  animation: fadeModal 0.3s ease;
 }
-
-
-
 
 @keyframes fadeModal {
-
-from{
-
-opacity:0;
-
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-
-to{
-
-opacity:1;
-
-}
-
-}
-
-
-
-
-
 
 .modal-detalle-contenido {
-
-
-  width:100%;
-
-
-  max-width:1100px;
-
-
-  height:90vh;
-
-
-  background:white;
-
-
-  border-radius:22px;
-
-
-  overflow:hidden;
-
-
-  position:relative;
-
-
-  box-shadow:
-  0 25px 60px rgba(0,0,0,.25);
-
-
-  animation:
-  subirModal .35s ease;
-
-
+  width: 100%;
+  max-width: 1100px;
+  height: 90vh;
+  background: white;
+  border-radius: 22px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  animation: subirModal 0.35s ease;
 }
-
-
-
-
-
 
 @keyframes subirModal {
-
-
-from{
-
-transform:translateY(30px);
-
-opacity:0;
-
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-
-to{
-
-transform:translateY(0);
-
-opacity:1;
-
-}
-
-
-}
-
-
-
-
-
-
-/* BOTON CERRAR */
-
-
+/* Botón cerrar */
 .btn-cerrar-detalle {
-
-
-position:absolute;
-
-
-top:18px;
-
-
-right:18px;
-
-
-width:42px;
-
-
-height:42px;
-
-
-border-radius:50%;
-
-
-border:none;
-
-
-background:white;
-
-
-display:flex;
-
-
-align-items:center;
-
-
-justify-content:center;
-
-
-cursor:pointer;
-
-
-z-index:50;
-
-
-box-shadow:
-0 5px 15px rgba(0,0,0,.15);
-
-
-transition:.3s;
-
-
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s;
 }
 
-
-
-
-
-.btn-cerrar-detalle:hover{
-
-
-transform:rotate(90deg);
-
-
-background:
-var(--accent-yellow);
-
-
+.btn-cerrar-detalle:hover {
+  transform: rotate(90deg);
+  background: var(--accent-yellow);
 }
 
-
-
-
-
-
-
-
-
-/* CONTENEDOR PRINCIPAL */
-
-
+/* Contenedor principal */
 .modal-detalle-grid {
-
-
-display:grid;
-
-
-grid-template-columns:45% 55%;
-
-
-height:100%;
-
-
+  display: grid;
+  grid-template-columns: 45% 55%;
+  height: 100%;
 }
 
-
-
-
-
-
-
-
-/* ===============================
-   GALERIA
-================================ */
-
-
+/* Galería */
 .modal-detalle-galeria,
-
 .detalle-galeria {
-
-
-background:#f8fafc;
-
-
-height:100%;
-
-
-display:flex;
-
-
-flex-direction:column;
-
-
-align-items:center;
-
-
-justify-content:center;
-
-
-padding:35px;
-
-
-border-right:1px solid #e5e7eb;
-
-
-overflow:hidden;
-
-
+  background: #f8fafc;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 35px;
+  border-right: 1px solid #e5e7eb;
+  overflow: hidden;
 }
-
-
-
-
-
-
 
 .imagen-principal-contenedor {
-
-
-width:100%;
-
-
-height:380px;
-
-
-display:flex;
-
-
-justify-content:center;
-
-
-align-items:center;
-
-
-margin-bottom:25px;
-
-
+  width: 100%;
+  height: 380px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
 }
-
-
-
 
 .imagen-principal-detalle {
-
-
-width:100%;
-
-
-height:100%;
-
-
-object-fit:contain;
-
-
-filter:
-drop-shadow(
-0 15px 20px rgba(0,0,0,.12)
-);
-
-
-transition:.4s;
-
-
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.12));
+  transition: 0.4s;
 }
 
-
-
-
-
-.imagen-principal-detalle:hover{
-
-
-transform:scale(1.05);
-
-
+.imagen-principal-detalle:hover {
+  transform: scale(1.05);
 }
-
-
-
-
-
-
 
 .miniaturas-contenedor {
-
-
-display:flex;
-
-
-gap:12px;
-
-
-justify-content:center;
-
-
-flex-wrap:wrap;
-
-
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
-
-
-
-
 
 .miniatura-item {
-
-
-width:65px;
-
-
-height:65px;
-
-
-background:white;
-
-
-padding:5px;
-
-
-border-radius:12px;
-
-
-border:2px solid transparent;
-
-
-cursor:pointer;
-
-
-box-shadow:
-0 3px 10px rgba(0,0,0,.1);
-
-
-transition:.3s;
-
-
+  width: 65px;
+  height: 65px;
+  background: white;
+  padding: 5px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
 }
-
-
-
 
 .miniatura-item img {
-
-
-width:100%;
-
-
-height:100%;
-
-
-object-fit:contain;
-
-
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
-
-
-
 
 .miniatura-item:hover {
-
-
-transform:translateY(-3px);
-
-
+  transform: translateY(-3px);
 }
-
-
-
 
 .miniatura-item.activa {
-
-
-border-color:
-var(--accent-yellow);
-
-
+  border-color: var(--accent-yellow);
 }
 
-
-
-
-
-
-
-
-
-/* ===============================
-   INFORMACION CON SCROLL
-================================ */
-
-
+/* Información con scroll */
 .detalle-info {
-
-
-height:100%;
-
-
-overflow-y:auto;
-
-
-padding:40px;
-
-
+  height: 100%;
+  overflow-y: auto;
+  padding: 40px;
 }
-
-
-
-
 
 .detalle-info::-webkit-scrollbar {
-
-
-width:7px;
-
-
+  width: 7px;
 }
-
-
 
 .detalle-info::-webkit-scrollbar-thumb {
-
-
-background:#cbd5e1;
-
-
-border-radius:20px;
-
-
+  background: #cbd5e1;
+  border-radius: 20px;
 }
 
-
-
-
-
-
-
-
-
-/* TEXTO */
-
-
+/* Tipografía y secciones */
 .detalle-categoria {
-
-
-display:inline-block;
-
-
-background:#eef4ff;
-
-
-color:
-var(--primary-blue);
-
-
-padding:7px 15px;
-
-
-border-radius:20px;
-
-
-font-size:.75rem;
-
-
-font-weight:800;
-
-
-text-transform:uppercase;
-
-
-margin-bottom:20px;
-
-
+  display: inline-block;
+  background: #eef4ff;
+  color: var(--primary-blue);
+  padding: 7px 15px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
-
-
-
-
 
 .detalle-titulo {
-
-
-font-size:
-clamp(1.8rem,3vw,2.5rem);
-
-
-font-weight:900;
-
-
-color:
-var(--primary-blue);
-
-
-line-height:1.2;
-
-
-margin-bottom:20px;
-
-
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 900;
+  color: var(--primary-blue);
+  line-height: 1.2;
+  margin-bottom: 20px;
 }
-
-
-
-
-
-
 
 .detalle-precio-estado {
-
-
-display:flex;
-
-
-align-items:center;
-
-
-gap:15px;
-
-
-margin-bottom:25px;
-
-
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
 }
-
-
-
-
-
 
 .detalle-precio {
-
-
-font-size:2.2rem;
-
-
-font-weight:900;
-
-
-color:#dc2626;
-
-
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #dc2626;
 }
-
-
-
-
-
-
-
 
 .detalle-descripcion-corta {
-
-
-font-size:1.05rem;
-
-
-line-height:1.7;
-
-
-color:#475569;
-
-
-margin-bottom:25px;
-
-
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 25px;
 }
-
-
-
-
-
-
 
 .detalle-separador {
-
-
-border:none;
-
-
-border-top:1px solid #e5e7eb;
-
-
-margin:25px 0;
-
-
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 25px 0;
 }
-
-
-
-
-
-
 
 .detalle-secciones {
-
-
-display:flex;
-
-
-flex-direction:column;
-
-
-gap:30px;
-
-
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
-
-
-
-
-
-
 
 .detalle-seccion h3 {
-
-
-font-size:1.2rem;
-
-
-font-weight:800;
-
-
-color:
-var(--primary-blue);
-
-
-margin-bottom:12px;
-
-
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--primary-blue);
+  margin-bottom: 12px;
 }
-
-
-
-
-
-
 
 .detalle-seccion p {
-
-
-font-size:1rem;
-
-
-line-height:1.8;
-
-
-color:#475569;
-
-
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #475569;
 }
-
-
-
-
-
-
 
 .texto-preformateado {
-
-
-white-space:pre-wrap;
-
-
-background:#f8fafc;
-
-
-padding:20px;
-
-
-border-radius:14px;
-
-
-border:1px solid #e2e8f0;
-
-
-line-height:1.8;
-
-
-color:#334155;
-
-
+  white-space: pre-wrap;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  line-height: 1.8;
+  color: #334155;
 }
 
+/* Responsive Tablet */
+@media (max-width: 900px) {
+  .modal-detalle-contenido {
+    height: 95vh;
+  }
 
+  .modal-detalle-grid {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
 
+  .modal-detalle-galeria,
+  .detalle-galeria {
+    height: auto;
+    border-right: none;
+  }
 
+  .imagen-principal-contenedor {
+    height: 280px;
+  }
 
-
-
-
-
-/* ===============================
-   TABLET
-================================ */
-
-
-@media(max-width:900px){
-
-
-
-.modal-detalle-contenido{
-
-
-height:95vh;
-
-
+  .detalle-info {
+    height: auto;
+    overflow: visible;
+    padding: 25px;
+  }
 }
 
-
-
-.modal-detalle-grid{
-
-
-grid-template-columns:1fr;
-
-
-overflow-y:auto;
-
-
-}
-
-
-
-.modal-detalle-galeria,
-
-.detalle-galeria{
-
-
-height:auto;
-
-
-border-right:none;
-
-
-}
-
-
-
-.imagen-principal-contenedor{
-
-
-height:280px;
-
-
-}
-
-
-
-.detalle-info{
-
-
-height:auto;
-
-
-overflow:visible;
-
-
-padding:25px;
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-
-/* ===============================
-   CELULAR
-================================ */
-
-
-@media(max-width:600px){
-
-
-
-.modal-detalle-overlay{
-
-
-padding:10px;
-
-
-align-items:flex-end;
-
-
-}
-
-
-
-.modal-detalle-contenido{
-
-
-height:95vh;
-
-
-border-radius:22px 22px 0 0;
-
-
-}
-
-
-
-.imagen-principal-contenedor{
-
-
-height:220px;
-
-
-}
-
-
-
-.detalle-info{
-
-
-padding:20px;
-
-
-}
-
-
-
-.detalle-titulo{
-
-
-font-size:1.5rem;
-
-
-}
-
-
-
-.detalle-precio{
-
-
-font-size:1.7rem;
-
-
-}
-
-
-
-.btn-cerrar-detalle{
-
-
-top:12px;
-
-
-right:12px;
-
-
-}
-
-
-
+/* Responsive Celular */
+@media (max-width: 600px) {
+  .modal-detalle-overlay {
+    padding: 10px;
+    align-items: flex-end;
+  }
+
+  .modal-detalle-contenido {
+    height: 95vh;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .imagen-principal-contenedor {
+    height: 220px;
+  }
+
+  .detalle-info {
+    padding: 20px;
+  }
+
+  .detalle-titulo {
+    font-size: 1.5rem;
+  }
+
+  .detalle-precio {
+    font-size: 1.7rem;
+  }
+
+  .btn-cerrar-detalle {
+    top: 12px;
+    right: 12px;
+  }
 }

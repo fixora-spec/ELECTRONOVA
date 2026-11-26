@@ -1,3 +1,4 @@
+// Control de paginación
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import './Paginacion.css';
 
@@ -5,16 +6,13 @@ export function Paginacion({ pagination, onCambiarPagina }) {
   if (!pagination || pagination.totalPages <= 1) return null;
 
   const { page, totalPages, total, limit } = pagination;
-
-  // Calcular rango de elementos mostrados
   const inicio = (page - 1) * limit + 1;
   const fin = Math.min(page * limit, total);
 
-  // Generar arreglo de números de página para mostrar
+  // Cálculo de páginas visibles
   const obtenerNumerosPagina = () => {
     const paginas = [];
-    const delta = 2; // Cantidad de páginas a los lados de la actual
-
+    const delta = 2;
     const rangoIzquierdo = Math.max(1, page - delta);
     const rangoDerecho = Math.min(totalPages, page + delta);
 
@@ -28,99 +26,104 @@ export function Paginacion({ pagination, onCambiarPagina }) {
   const { paginas, mostrarInicio, mostrarFin } = obtenerNumerosPagina();
 
   return (
-    <div className="paginacion-contenedor">
-      <div className="paginacion-info">
-        Mostrando <strong>{inicio}</strong> - <strong>{fin}</strong> de <strong>{total}</strong> productos
+    <nav className="paginacion-contenedor" aria-label="Navegación de páginas">
+      {/* Resumen de registros */}
+      <div className="paginacion-info-pill">
+        <span>Mostrando</span>
+        <span className="paginacion-resaltado">{inicio} - {fin}</span>
+        <span>de</span>
+        <span className="paginacion-resaltado">{total}</span>
+        <span>productos</span>
       </div>
 
-      <div className="paginacion-botones">
-        {/* Ir al inicio */}
+      {/* Botones de navegación en dock */}
+      <div className="paginacion-dock">
         <button
           type="button"
-          className="paginacion-btn"
+          className="paginacion-btn paginacion-btn-nav"
           disabled={page === 1}
           onClick={() => onCambiarPagina(1)}
           title="Primera página"
+          aria-label="Primera página"
         >
-          <ChevronsLeft size={18} />
+          <ChevronsLeft size={16} />
         </button>
 
-        {/* Anterior */}
         <button
           type="button"
-          className="paginacion-btn"
+          className="paginacion-btn paginacion-btn-prev"
           disabled={!pagination.hasPrevPage}
           onClick={() => onCambiarPagina(page - 1)}
           title="Página anterior"
+          aria-label="Página anterior"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={16} />
           <span className="btn-texto">Anterior</span>
         </button>
 
-        {/* Primera página si está lejos */}
-        {mostrarInicio && (
-          <>
+        <div className="paginacion-numeros-grupo">
+          {mostrarInicio && (
+            <>
+              <button
+                type="button"
+                className={`paginacion-numero ${page === 1 ? 'activo' : ''}`}
+                onClick={() => onCambiarPagina(1)}
+              >
+                1
+              </button>
+              <span className="paginacion-puntos">...</span>
+            </>
+          )}
+
+          {paginas.map((num) => (
             <button
+              key={num}
               type="button"
-              className={`paginacion-numero ${page === 1 ? 'activo' : ''}`}
-              onClick={() => onCambiarPagina(1)}
+              className={`paginacion-numero ${page === num ? 'activo' : ''}`}
+              onClick={() => onCambiarPagina(num)}
             >
-              1
+              {num}
             </button>
-            <span className="paginacion-puntos">...</span>
-          </>
-        )}
+          ))}
 
-        {/* Números de página */}
-        {paginas.map((num) => (
-          <button
-            key={num}
-            type="button"
-            className={`paginacion-numero ${page === num ? 'activo' : ''}`}
-            onClick={() => onCambiarPagina(num)}
-          >
-            {num}
-          </button>
-        ))}
+          {mostrarFin && (
+            <>
+              <span className="paginacion-puntos">...</span>
+              <button
+                type="button"
+                className={`paginacion-numero ${page === totalPages ? 'activo' : ''}`}
+                onClick={() => onCambiarPagina(totalPages)}
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+        </div>
 
-        {/* Última página si está lejos */}
-        {mostrarFin && (
-          <>
-            <span className="paginacion-puntos">...</span>
-            <button
-              type="button"
-              className={`paginacion-numero ${page === totalPages ? 'activo' : ''}`}
-              onClick={() => onCambiarPagina(totalPages)}
-            >
-              {totalPages}
-            </button>
-          </>
-        )}
-
-        {/* Siguiente */}
         <button
           type="button"
-          className="paginacion-btn"
+          className="paginacion-btn paginacion-btn-next"
           disabled={!pagination.hasNextPage}
           onClick={() => onCambiarPagina(page + 1)}
           title="Página siguiente"
+          aria-label="Página siguiente"
         >
           <span className="btn-texto">Siguiente</span>
-          <ChevronRight size={18} />
+          <ChevronRight size={16} />
         </button>
 
-        {/* Ir al final */}
         <button
           type="button"
-          className="paginacion-btn"
+          className="paginacion-btn paginacion-btn-nav"
           disabled={page === totalPages}
           onClick={() => onCambiarPagina(totalPages)}
           title="Última página"
+          aria-label="Última página"
         >
-          <ChevronsRight size={18} />
+          <ChevronsRight size={16} />
         </button>
       </div>
-    </div>
+    </nav>
   );
 }
 

@@ -1,3 +1,4 @@
+// Administración de categorías
 import { useState, useEffect } from 'react';
 import { categoriasService } from '../../services/categorias.service';
 import { Plus, Search } from 'lucide-react';
@@ -10,11 +11,12 @@ function AdminCategorias() {
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [categoriaActual, setCategoriaActual] = useState({ _id: '', nombre: '', descripcion: '' });
 
+  // Carga inicial
   useEffect(() => {
     cargarCategorias();
   }, []);
@@ -32,6 +34,7 @@ function AdminCategorias() {
     }
   }
 
+  // Acciones de modal y eliminación
   const abrirModalNuevo = () => {
     setModoEdicion(false);
     setCategoriaActual({ _id: '', nombre: '', descripcion: '' });
@@ -55,7 +58,7 @@ function AdminCategorias() {
     }
   };
 
-  const categoriasFiltradas = categorias.filter(cat => 
+  const categoriasFiltradas = categorias.filter((cat) =>
     cat.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
@@ -63,6 +66,7 @@ function AdminCategorias() {
 
   return (
     <div className="admin-modulo">
+      {/* Cabecera */}
       <div className="admin-cabecera-modulo">
         <div>
           <h2>Gestión de Categorías</h2>
@@ -73,30 +77,32 @@ function AdminCategorias() {
         </button>
       </div>
 
+      {/* Buscador */}
       <div className="admin-controles">
         <div className="admin-buscador">
           <Search size={18} className="icono-buscar" />
-          <input 
-            type="text" 
-            placeholder="Buscar por nombre..." 
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
         </div>
       </div>
 
+      {/* Tabla y modal */}
       {error ? (
         <div className="error-mensaje">{error}</div>
       ) : (
-        <TablaCategoriasAdmin 
-          categorias={categoriasFiltradas} 
-          onEdit={abrirModalEditar} 
-          onDelete={handleEliminar} 
+        <TablaCategoriasAdmin
+          categorias={categoriasFiltradas}
+          onEdit={abrirModalEditar}
+          onDelete={handleEliminar}
         />
       )}
 
       {modalAbierto && (
-        <ModalFormularioCategoria 
+        <ModalFormularioCategoria
           modoEdicion={modoEdicion}
           categoriaInicial={categoriaActual}
           onClose={() => setModalAbierto(false)}

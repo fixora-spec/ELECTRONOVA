@@ -1,10 +1,11 @@
+// Panel de resumen administrativo
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { FolderTree, PackageSearch, PlusCircle, LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { productosService } from '../../services/productos.service';
 import { categoriasService } from '../../services/categorias.service';
-import './DashboardAdmin.css'; // Crearemos este archivo para los estilos premium
+import './DashboardAdmin.css';
 
 function DashboardAdmin() {
   const { admin } = useAuth();
@@ -12,6 +13,7 @@ function DashboardAdmin() {
   const [stats, setStats] = useState({ categorias: '--', productos: '--' });
   const [loading, setLoading] = useState(true);
 
+  // Carga de estadísticas
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -24,7 +26,7 @@ function DashboardAdmin() {
           productos: prods.length
         });
       } catch (error) {
-        console.error("Error al cargar estadísticas", error);
+        console.error('Error al cargar estadísticas', error);
       } finally {
         setLoading(false);
       }
@@ -34,16 +36,18 @@ function DashboardAdmin() {
 
   return (
     <div className="dashboard-admin-container">
+      {/* Cabecera */}
       <div className="dashboard-header">
         <div>
           <h1>Panel de Administración</h1>
-          <p>Bienvenido de nuevo, <strong>{admin?.nombre || 'Administrador'}</strong>. Aquí tienes un resumen de tu tienda.</p>
+          <p>Bienvenido de nuevo, <strong>{admin?.nombres ? `${admin.nombres} ${admin.apellidos || ''}`.trim() : (admin?.correo || 'Administrador')}</strong>. Aquí tienes un resumen de tu tienda.</p>
         </div>
         <div className="header-icon">
           <LayoutDashboard size={40} opacity={0.2} />
         </div>
       </div>
-      
+
+      {/* Tarjetas de estadísticas */}
       <div className="dashboard-stats-grid">
         <div className="stat-card-premium card-blue" onClick={() => navigate('/admin/categorias')} style={{ cursor: 'pointer' }}>
           <div className="stat-card-content">
@@ -71,7 +75,8 @@ function DashboardAdmin() {
           <div className="stat-card-bg-icon"><PackageSearch size={120} /></div>
         </div>
       </div>
-      
+
+      {/* Acciones rápidas */}
       <div className="dashboard-quick-actions">
         <h2>Acciones Rápidas</h2>
         <div className="actions-grid">
@@ -90,4 +95,3 @@ function DashboardAdmin() {
 }
 
 export { DashboardAdmin };
-

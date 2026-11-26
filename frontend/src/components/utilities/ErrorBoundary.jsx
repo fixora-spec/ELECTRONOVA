@@ -1,3 +1,4 @@
+// Captura de errores de interfaz
 import { Component } from 'react';
 import './ErrorBoundary.css';
 import { AlertTriangle } from 'lucide-react';
@@ -9,19 +10,16 @@ class ErrorBoundary extends Component {
   }
 
   static getDerivedStateFromError() {
-    // Actualiza el estado para mostrar la interfaz de reserva
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    // Puedes registrar el error en un servicio de reportes
-    console.error("ErrorBoundary caught an error", error, errorInfo);
+    console.error('ErrorBoundary caught an error', error, errorInfo);
     this.setState({ errorInfo });
   }
 
   render() {
     if (this.state.hasError) {
-      // Puedes renderizar cualquier interfaz de reserva personalizada
       return (
         <div className="error-boundary-container">
           <div className="error-boundary-content">
@@ -32,8 +30,8 @@ class ErrorBoundary extends Component {
               Por favor, intenta recargar la página.
             </p>
             <div className="error-boundary-actions">
-              <button 
-                className="btn-recargar" 
+              <button
+                className="btn-recargar"
                 onClick={() => window.location.reload()}
               >
                 Recargar página
@@ -47,7 +45,7 @@ class ErrorBoundary extends Component {
       );
     }
 
-    return this.props.children; 
+    return this.props.children;
   }
 }
 

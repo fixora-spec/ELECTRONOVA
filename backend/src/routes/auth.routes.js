@@ -1,8 +1,8 @@
 import { Router } from "express";
 import {
-  authController,
   register,
   login,
+  refresh,
   logout,
   getProfile,
   forgotPassword,
@@ -11,13 +11,17 @@ import {
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { authLimiter } from "../middlewares/rateLimiter.middleware.js";
 
+// Rutas de autenticación
 const authRoutes = Router();
 
-authRoutes.post("/register", authLimiter, (req, res) => authController.register(req, res));
-authRoutes.post("/login", authLimiter, (req, res) => authController.login(req, res));
-authRoutes.post("/logout", (req, res) => authController.logout(req, res));
-authRoutes.post("/forgot-password", authLimiter, (req, res) => authController.forgotPassword(req, res));
-authRoutes.post("/reset-password", authLimiter, (req, res) => authController.resetPassword(req, res));
-authRoutes.get("/me", authMiddleware, (req, res) => authController.getProfile(req, res));
+authRoutes.post("/register", authLimiter, register);
+authRoutes.post("/login", authLimiter, login);
+authRoutes.post("/refresh", refresh);
+authRoutes.get("/refresh", refresh);
+authRoutes.post("/logout", logout);
+authRoutes.delete("/logout", logout);
+authRoutes.post("/forgot-password", authLimiter, forgotPassword);
+authRoutes.post("/reset-password", authLimiter, resetPassword);
+authRoutes.get("/me", authMiddleware, getProfile);
 
 export { authRoutes };

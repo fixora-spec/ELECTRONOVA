@@ -1,13 +1,17 @@
+// Modal de formulario de producto
 import { useState } from 'react';
 import { X, Image as ImageIcon } from 'lucide-react';
 import { productosService } from '../../services/productos.service';
+import { resolveImageUrl } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
+import BotonCerrarModal from '../atoms/BotonCerrarModal';
 
 const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onClose, onSuccess }) => {
   const { admin } = useAuth();
   const [productoActual, setProductoActual] = useState(productoInicial);
   const [guardando, setGuardando] = useState(false);
 
+  // Manejo de campos e imágenes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setProductoActual({
@@ -20,27 +24,27 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       const disponibles = 5 - productoActual.previewImagenes.length;
-      
+
       if (disponibles <= 0) {
-        alert("Ya has alcanzado el límite máximo de 5 imágenes.");
+        alert('Ya has alcanzado el límite máximo de 5 imágenes.');
         e.target.value = null;
         return;
       }
-      
+
       const archivosPermitidos = files.slice(0, disponibles);
       const nuevosArchivos = [...productoActual.imagenes, ...archivosPermitidos];
-      const nuevosPreviews = [...productoActual.previewImagenes, ...archivosPermitidos.map(f => URL.createObjectURL(f))];
-      
+      const nuevosPreviews = [...productoActual.previewImagenes, ...archivosPermitidos.map((f) => URL.createObjectURL(f))];
+
       setProductoActual({
         ...productoActual,
         imagenes: nuevosArchivos,
         previewImagenes: nuevosPreviews
       });
-      
+
       if (files.length > disponibles) {
         alert(`Solo se agregaron ${disponibles} imagen(es). El límite es de 5 en total.`);
       }
-      
+
       e.target.value = null;
     }
   };
@@ -48,9 +52,9 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
   const handleEliminarImagen = (index) => {
     const nuevasPreviews = [...productoActual.previewImagenes];
     nuevasPreviews.splice(index, 1);
-    
+
     const nuevasImagenes = [...productoActual.imagenes];
-    
+
     if (nuevasImagenes.length === productoActual.previewImagenes.length) {
       nuevasImagenes.splice(index, 1);
     } else {
@@ -67,10 +71,11 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
     });
   };
 
+  // Envío de formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setGuardando(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('nombre', productoActual.nombre);
@@ -80,20 +85,24 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
       formData.append('descripcionCompleta', productoActual.descripcionCompleta);
       formData.append('especificacionesTec', productoActual.especificacionesTec);
       formData.append('caracteristicas', productoActual.caracteristicas);
-      formData.append('productoDestacado', productoActual.productoDestacado);
+      formData.append('productoDestacado', Boolean(productoActual.productoDestacado));
       formData.append('estado', productoActual.estado !== false);
-      formData.append('idAdministrador', admin?.id || admin?._id);
-      
+      const adminId = admin?.id || admin?._id;
+      if (adminId) {
+        formData.append('idAdministrador', adminId);
+      }
+
       if (productoActual.imagenes && productoActual.imagenes.length > 0) {
-        productoActual.imagenes.forEach(img => {
+        productoActual.imagenes.forEach((img) => {
           formData.append('imagenes', img);
         });
       }
 
-      const imagenesExistentesUrls = productoActual.previewImagenes.filter(p => 
-        typeof p === 'string' && 
-        (p.startsWith('/') || p.startsWith('http') || p.startsWith('data:image')) && 
-        !p.startsWith('blob:')
+      const imagenesExistentesUrls = productoActual.previewImagenes.filter(
+        (p) =>
+          typeof p === 'string' &&
+          (p.startsWith('/') || p.startsWith('http') || p.startsWith('data:image')) &&
+          !p.startsWith('blob:')
       );
       formData.append('imagenesExistentes', JSON.stringify(imagenesExistentesUrls));
 
@@ -102,7 +111,7 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
       } else {
         await productosService.create(formData);
       }
-      
+
       onSuccess();
     } catch (err) {
       alert(err.response?.data?.message || 'Error al guardar el producto');
@@ -114,13 +123,14 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
   return (
     <div className="modal-overlay">
       <div className="modal-contenido" style={{ maxWidth: '800px', width: '90%' }}>
+        {/* Cabecera */}
         <div className="modal-cabecera">
           <h3>{modoEdicion ? 'Editar Producto' : 'Nuevo Producto'}</h3>
-          <button type="button" className="btn-cerrar-modal" onClick={onClose}><X size={24} /></button>
+          <BotonCerrarModal onClick={onClose} className="btn-cerrar-modal" />
         </div>
-        
+
+        {/* Formulario */}
         <form onSubmit={handleSubmit} className="modal-formulario" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          
           <div className="admin-productos-grid" style={{ overflowY: 'auto', paddingRight: '0.5rem', paddingBottom: '1rem', flex: 1 }}>
             <div>
               <div className="form-grupo">
@@ -137,7 +147,7 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
                   <label>Categoría *</label>
                   <select name="idCategoria" value={productoActual.idCategoria} onChange={handleInputChange} required>
                     <option value="">Seleccione una categoría</option>
-                    {categorias.map(cat => (
+                    {categorias.map((cat) => (
                       <option key={cat._id} value={cat._id}>{cat.nombre}</option>
                     ))}
                   </select>
@@ -181,12 +191,12 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
               <div className="form-grupo">
                 <label>Imágenes del Producto (hasta 5)</label>
                 <div className="custom-file-upload">
-                  <input 
-                    type="file" 
-                    id="file-upload" 
-                    accept="image/*" 
+                  <input
+                    type="file"
+                    id="file-upload"
+                    accept="image/*"
                     multiple
-                    onChange={handleImagenChange} 
+                    onChange={handleImagenChange}
                     className="file-input-hidden"
                   />
                   <label htmlFor="file-upload" className="btn-file-upload">
@@ -194,18 +204,22 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
                     Seleccionar Imágenes
                   </label>
                   <span className="file-name-display">
-                    {productoActual.previewImagenes && productoActual.previewImagenes.length >= 5 
-                      ? 'Límite máximo (5/5) alcanzado' 
+                    {productoActual.previewImagenes && productoActual.previewImagenes.length >= 5
+                      ? 'Límite máximo (5/5) alcanzado'
                       : `${productoActual.previewImagenes ? 5 - productoActual.previewImagenes.length : 5} espacio(s) libre(s)`}
                   </span>
                 </div>
-                
+
                 {productoActual.previewImagenes && productoActual.previewImagenes.length > 0 && (
                   <div style={{ marginTop: '0.8rem', border: '1px dashed var(--primary-blue)', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#fafafa', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     {productoActual.previewImagenes.map((prev, index) => (
                       <div key={index} style={{ position: 'relative', width: 'calc(20% - 0.4rem)', aspectRatio: '1/1' }}>
-                        <img src={prev.startsWith('http') || prev.startsWith('blob') || prev.startsWith('data:image') ? prev : (prev.startsWith('/') ? `${import.meta.env.VITE_API_URL}${prev}` : `${import.meta.env.VITE_API_URL}/${prev}`)} alt={`Preview ${index}`} style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px' }} />
-                        <button 
+                        <img
+                          src={resolveImageUrl(prev)}
+                          alt={`Preview ${index}`}
+                          style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px' }}
+                        />
+                        <button
                           type="button"
                           onClick={() => handleEliminarImagen(index)}
                           style={{
@@ -250,4 +264,3 @@ const ModalFormularioProducto = ({ modoEdicion, productoInicial, categorias, onC
 };
 
 export default ModalFormularioProducto;
-

@@ -1,27 +1,37 @@
-
+// Pie de página
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import './PieDePagina.css';
 
 const PieDePagina = () => {
+  const handleScrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <footer className="pie-pagina">
       <div className="pie-pagina-contenedor">
-
+        {/* Marca y redes */}
         <div className="pie-columna">
-          <div className="pie-logo">
-            <div className="logo-icono logo-icono-blanco">
-              <span className="logo-foco">💡</span>
+          <Link to="/" onClick={handleScrollTop} className="pie-logo-link" title="Ir al inicio">
+            <div className="pie-logo">
+              <div className="logo-icono logo-icono-blanco">
+                <span className="logo-foco">💡</span>
+              </div>
+              <div className="logo-texto">
+                <span className="logo-electronova-blanco">ELECTRONOVA</span>
+                <span className="logo-slogan-blanco">Soluciones eléctricas para un mejor futuro</span>
+              </div>
             </div>
-            <div className="logo-texto">
-              <span className="logo-electronova-blanco">ELECTRONOVA</span>
-              <span className="logo-slogan-blanco">Soluciones eléctricas para un mejor futuro</span>
-            </div>
-          </div>
+          </Link>
           <p className="pie-descripcion">
             Tu tienda de confianza en productos eléctricos. Calidad, variedad y el mejor servicio para tus proyectos.
           </p>
           <div className="pie-redes">
-            {/* Aquí irían los iconos de redes sociales */}
             <span className="red-icono">f</span>
             <span className="red-icono">ig</span>
             <span className="red-icono">wa</span>
@@ -29,16 +39,18 @@ const PieDePagina = () => {
           </div>
         </div>
 
+        {/* Enlaces rápidos */}
         <div className="pie-columna">
           <h4 className="pie-titulo">Enlaces rápidos</h4>
           <ul className="pie-enlaces">
-            <li><a href="/"> Inicio</a></li>
-            <li><a href="/productos"> Productos</a></li>
-            <li><a href="/nosotros"> Empresa</a></li>
-            <li><a href="/contacto"> Contacto</a></li>
+            <li><Link to="/" onClick={handleScrollTop}> Inicio</Link></li>
+            <li><Link to="/productos" onClick={handleScrollTop}> Productos</Link></li>
+            <li><Link to="/nosotros" onClick={handleScrollTop}> Empresa</Link></li>
+            <li><Link to="/contacto" onClick={handleScrollTop}> Contacto</Link></li>
           </ul>
         </div>
 
+        {/* Contacto */}
         <div className="pie-columna">
           <h4 className="pie-titulo">Información de contacto</h4>
           <ul className="pie-contacto">
@@ -61,16 +73,17 @@ const PieDePagina = () => {
           </ul>
         </div>
 
+        {/* Ubicación */}
         <div className="pie-columna pie-columna-mapa">
           <div className="pie-mapa-placeholder">
             <MapPin size={32} className="pie-mapa-icono" />
             <p>Visítanos en nuestra tienda</p>
-            <a href="#" className="pie-mapa-enlace">Cómo llegar →</a>
+            <Link to="/contacto" onClick={handleScrollTop} className="pie-mapa-enlace">Cómo llegar →</Link>
           </div>
         </div>
-
       </div>
 
+      {/* Derechos de autor */}
       <div className="pie-pagina-inferior">
         <p>© 2026 ELECTRONOVA. Todos los derechos reservados.</p>
         <p>Desarrollado con tecnología para un mejor futuro.</p>

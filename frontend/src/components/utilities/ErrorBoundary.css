@@ -1,3 +1,4 @@
+/* Contenedor de error */
 .error-boundary-container {
   display: flex;
   flex-direction: column;
@@ -26,7 +27,7 @@
 }
 
 .error-boundary-content h1 {
-  color: #0d284a; /* primary-blue */
+  color: #0d284a;
   font-size: 2rem;
   margin-bottom: 1rem;
 }
@@ -38,6 +39,7 @@
   line-height: 1.5;
 }
 
+/* Botones de acción */
 .error-boundary-actions {
   display: flex;
   gap: 1rem;
@@ -45,7 +47,7 @@
 }
 
 .btn-recargar {
-  background-color: #ffc107; /* accent-yellow */
+  background-color: #ffc107;
   color: #0d284a;
   border: none;
   padding: 0.8rem 1.5rem;

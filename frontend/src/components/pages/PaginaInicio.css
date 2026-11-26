@@ -1,13 +1,16 @@
+/* Sección de productos destacados */
 .seccion-destacados {
   padding: 4rem 10%;
   background-color: var(--bg-light);
 }
+
 .seccion-cabecera {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 2rem;
 }
+
 .seccion-cabecera h2 {
   font-size: 1.8rem;
   color: var(--primary-blue);
@@ -15,6 +18,7 @@
   border-bottom: 2px solid var(--accent-yellow);
   padding-bottom: 0.5rem;
 }
+
 .enlace-ver-todos {
   background-color: var(--primary-blue);
   color: white;
@@ -27,30 +31,33 @@
 }
 
 .enlace-ver-todos:hover {
-  background-color: #0b1426; /* un azul un poco más oscuro, asumiendo primary-blue */
+  background-color: #0b1426;
   transform: translateY(-2px);
 }
+
+/* Cuadrícula */
 .cuadricula-productos {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1.5rem;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .seccion-destacados {
     padding: 2rem 5%;
   }
-  
+
   .seccion-cabecera {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .seccion-cabecera h2 {
     font-size: 1.5rem;
   }
-  
+
   .cuadricula-productos {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;

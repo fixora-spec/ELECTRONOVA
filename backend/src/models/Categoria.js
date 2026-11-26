@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 
+// Esquema de Categoría
 const CategoriaSchema = new Schema(
   {
     nombre: { type: String, required: true },

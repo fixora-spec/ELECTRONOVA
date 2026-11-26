@@ -1,13 +1,8 @@
+// Tarjeta de producto en catálogo
+import PrecioProducto from '../atoms/PrecioProducto';
 import './TarjetaProducto.css';
 
-const TarjetaProducto = ({
-  imagen,
-  titulo,
-  precio,
-  onClick,
-}) => {
-  const precioFormateado = Number(precio || 0).toFixed(2);
-
+const TarjetaProducto = ({ imagen, titulo, precio, onClick }) => {
   return (
     <article className="tarjeta-producto">
       <div className="producto-imagen">
@@ -16,7 +11,7 @@ const TarjetaProducto = ({
           alt={titulo}
           loading="lazy"
           onError={(e) => {
-            e.target.src = "https://via.placeholder.com/300";
+            e.target.src = 'https://via.placeholder.com/300';
           }}
         />
       </div>
@@ -25,7 +20,7 @@ const TarjetaProducto = ({
         <h3 className="producto-titulo">{titulo}</h3>
 
         <div className="producto-footer">
-          <p className="producto-precio">S/ {precioFormateado}</p>
+          <PrecioProducto precio={precio} className="producto-precio" />
 
           <button
             className="producto-ver"

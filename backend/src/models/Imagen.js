@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 
+// Esquema de Imagen
 const ImagenSchema = new Schema(
   {
     idProducto: { type: Schema.Types.ObjectId, ref: "Producto", required: true },

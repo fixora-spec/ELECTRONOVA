@@ -1,13 +1,12 @@
+/* Contenedor de encabezado */
 .encabezado {
   background-color: var(--bg-white);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 100;
   padding: 0.5rem 5%;
 }
-
-
 
 .encabezado-contenedor {
   display: flex;
@@ -16,16 +15,13 @@
   height: 60px;
 }
 
-
-
+/* Logotipo */
 .encabezado-logo {
   display: flex;
   align-items: center;
   gap: 0.8rem;
   text-decoration: none;
 }
-
-
 
 .logo-icono {
   width: 45px;
@@ -35,22 +31,16 @@
   justify-content: center;
 }
 
-
-
 .logo-icono img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-
-
 .logo-texto {
   display: flex;
   flex-direction: column;
 }
-
-
 
 .logo-electronova {
   font-weight: 800;
@@ -58,544 +48,218 @@
   color: var(--primary-blue);
 }
 
-
-
-
-
+/* Navegación principal */
 .encabezado-acciones {
-
-  display:flex;
-
-  align-items:center;
-
-  gap:2rem;
-
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
-
-
-
-
 
 .navegacion-principal {
-
-  display:flex;
-
-  gap:1.5rem;
-
+  display: flex;
+  gap: 1.5rem;
 }
-
-
-
-
 
 .navegacion-principal a {
-
-  position:relative;
-
-  display:flex;
-
-  align-items:center;
-
-  gap:10px;
-
-  font-weight:500;
-
-  color:var(--text-dark);
-
-  text-decoration:none;
-
-  padding:8px 0;
-
-  transition:.3s;
-
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: var(--text-dark);
+  text-decoration: none;
+  padding: 8px 0;
+  transition: 0.3s;
 }
-
-
-
-
 
 .navegacion-principal a:hover {
-
-  color:var(--primary-blue);
-
+  color: var(--primary-blue);
 }
-
-
-
-
 
 .navegacion-principal a.active {
-
-  color:var(--primary-blue);
-
-  font-weight:700;
-
+  color: var(--primary-blue);
+  font-weight: 700;
 }
-
-
-
-
 
 .navegacion-principal a.active::after {
-
-  content:"";
-
-  position:absolute;
-
-  bottom:0;
-
-  left:0;
-
-  width:100%;
-
-  height:3px;
-
-  background:var(--accent-yellow);
-
-  border-radius:10px;
-
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent-yellow);
+  border-radius: 10px;
 }
 
-
-
-
-
+/* Acciones e iconos */
 .acciones-iconos {
-
-  display:flex;
-
-  align-items:center;
-
-  gap:1rem;
-
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
-
-
-
-
 
 .btn-icono {
-
-  background:none;
-
-  border:none;
-
-  cursor:pointer;
-
-  color:var(--primary-blue);
-
-  display:flex;
-
-  align-items:center;
-
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary-blue);
+  display: flex;
+  align-items: center;
 }
-
-
-
-
 
 .btn-login-header {
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  gap:.5rem;
-
-  background:var(--primary-blue);
-
-  color:white;
-
-  text-decoration:none;
-
-  padding:.55rem 1.1rem;
-
-  border-radius:8px;
-
-  font-weight:600;
-
-  transition:.3s;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--primary-blue);
+  color: white;
+  text-decoration: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.3s;
 }
-
-
-
-
 
 .btn-login-header:hover {
-
-  background:#091f3a;
-
+  background: #091f3a;
 }
-
-
-
-
 
 .mostrar-desktop {
-
-  display:flex;
-
+  display: flex;
 }
-
-
 
 .mostrar-mobile {
-
-  display:none;
-
+  display: none;
 }
-
-
-
-
 
 .menu-header-mobile,
-
 .menu-admin-mobile,
-
 .menu-overlay {
-
-  display:none;
-
+  display: none;
 }
 
+/* Responsive móvil y tablet */
+@media (max-width: 992px) {
+  .mostrar-desktop {
+    display: none;
+  }
 
+  .mostrar-mobile {
+    display: flex;
+  }
 
+  .admin-desktop {
+    display: none;
+  }
 
+  /* Panel lateral */
+  .navegacion-principal {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 320px;
+    max-width: 85%;
+    height: 100vh;
+    background: #082957;
+    flex-direction: column;
+    padding: 25px;
+    gap: 1.2rem;
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.25);
+    transition: 0.35s ease;
+    z-index: 500;
+  }
 
-/* RESPONSIVE */
+  .navegacion-principal.abierto {
+    left: 0;
+  }
 
-@media(max-width:992px){
+  /* Cabecera del menú móvil */
+  .menu-header-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 15px;
+  }
 
+  .menu-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-weight: 800;
+  }
 
+  .menu-logo img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+  }
 
+  .menu-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
 
+  /* Enlaces móviles */
+  .navegacion-principal a {
+    color: white;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+  }
 
-.mostrar-desktop {
+  .navegacion-principal a:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 
-  display:none;
+  .navegacion-principal a.active {
+    background: #fdbd11;
+    color: #082957;
+  }
 
+  .navegacion-principal a.active::after {
+    display: none;
+  }
+
+  /* Sección de sesión móvil */
+  .menu-admin-mobile {
+    display: block;
+    margin-top: auto;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .menu-admin-mobile .btn-login-header {
+    width: 100%;
+    background: #fdbd11;
+    color: #082957;
+    padding: 14px;
+  }
+
+  /* Sombra de fondo */
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 400;
+  }
 }
 
-
-
-.mostrar-mobile {
-
-  display:flex;
-
-}
-
-
-
-.admin-desktop {
-
-  display:none;
-
-}
-
-
-
-
-
-/* PANEL LATERAL */
-
-.navegacion-principal {
-
-
-  position:fixed;
-
-
-  top:0;
-
-
-  left:-100%;
-
-
-  width:320px;
-
-
-  max-width:85%;
-
-
-  height:100vh;
-
-
-  background:#082957;
-
-
-  flex-direction:column;
-
-
-  padding:25px;
-
-
-  gap:1.2rem;
-
-
-  box-shadow:8px 0 30px rgba(0,0,0,.25);
-
-
-  transition:.35s ease;
-
-
-  z-index:500;
-
-
-}
-
-
-
-
-
-.navegacion-principal.abierto {
-
-  left:0;
-
-}
-
-
-
-
-
-/* CABECERA MENU */
-
-.menu-header-mobile {
-
-
-  display:flex;
-
-
-  align-items:center;
-
-
-  justify-content:space-between;
-
-
-  padding-bottom:25px;
-
-
-  border-bottom:1px solid rgba(255,255,255,.2);
-
-
-  margin-bottom:15px;
-
-
-}
-
-
-
-
-
-.menu-logo {
-
-
-  display:flex;
-
-
-  align-items:center;
-
-
-  gap:10px;
-
-
-  color:white;
-
-
-  font-weight:800;
-
-
-}
-
-
-
-.menu-logo img {
-
-
-  width:42px;
-
-
-  height:42px;
-
-
-  object-fit:contain;
-
-
-}
-
-
-
-
-
-.menu-close {
-
-
-  background:rgba(255,255,255,.1);
-
-
-  border:none;
-
-
-  color:white;
-
-
-  width:40px;
-
-
-  height:40px;
-
-
-  border-radius:50%;
-
-
-  display:flex;
-
-
-  align-items:center;
-
-
-  justify-content:center;
-
-
-  cursor:pointer;
-
-
-}
-
-
-
-
-
-
-
-/* LINKS */
-
-.navegacion-principal a {
-
-
-  color:white;
-
-
-  padding:14px;
-
-
-  border-radius:10px;
-
-
-  font-size:1.05rem;
-
-
-}
-
-
-
-
-
-.navegacion-principal a:hover {
-
-
-  background:rgba(255,255,255,.1);
-
-
-}
-
-
-
-
-
-
-.navegacion-principal a.active {
-
-
-  background:#fdbd11;
-
-
-  color:#082957;
-
-
-}
-
-
-
-
-
-.navegacion-principal a.active::after {
-
-
-  display:none;
-
-
-}
-
-
-
-
-
-/* ADMIN */
-
-.menu-admin-mobile {
-
-
-  display:block;
-
-
-  margin-top:auto;
-
-
-  padding-top:25px;
-
-
-  border-top:1px solid rgba(255,255,255,.2);
-
-
-}
-
-
-
-
-
-.menu-admin-mobile .btn-login-header {
-
-
-  width:100%;
-
-
-  background:#fdbd11;
-
-
-  color:#082957;
-
-
-  padding:14px;
-
-
-}
-
-
-
-
-
-/* SOMBRA DE FONDO */
-
-.menu-overlay {
-
-
-  display: block;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(2px);
-  z-index: 400;
-}
-
-}
-
-/* ===================================================
-   USUARIO Y BOTÓN SALIR - DISEÑO 100% PROFESIONAL
-   =================================================== */
-
+/* Sesión de usuario en escritorio */
 .usuario-sesion-header {
   display: flex;
   align-items: center;
@@ -677,7 +341,7 @@
   text-overflow: ellipsis;
 }
 
-/* Botón Salir Profesional */
+/* Botón salir */
 .btn-salir-header {
   display: inline-flex;
   align-items: center;
@@ -717,7 +381,7 @@
   box-shadow: 0 1px 2px rgba(220, 38, 38, 0.1);
 }
 
-/* Tarjeta de usuario en Menú Móvil */
+/* Tarjeta de usuario en menú móvil */
 .usuario-mobile-card {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);

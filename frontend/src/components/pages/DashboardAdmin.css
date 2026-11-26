@@ -1,3 +1,4 @@
+/* Contenedor y cabecera del panel */
 .dashboard-admin-container {
   padding: 1rem;
   max-width: 1200px;
@@ -33,7 +34,7 @@
   align-items: center;
 }
 
-/* Grillas de Stats */
+/* Tarjetas de estadísticas */
 .dashboard-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -47,13 +48,13 @@
   padding: 2rem;
   color: white;
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat-card-premium:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 .card-blue {
@@ -104,7 +105,7 @@
   transform: rotate(-15deg);
 }
 
-/* Quick Actions */
+/* Acciones rápidas */
 .dashboard-quick-actions h2 {
   color: #333;
   margin-bottom: 1.5rem;
@@ -129,13 +130,14 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .btn-primary-action {
   background-color: var(--primary-blue, #0d47a1);
   color: white;
 }
+
 .btn-primary-action:hover {
   background-color: #08306b;
   transform: translateY(-2px);
@@ -146,19 +148,21 @@
   color: var(--primary-blue, #0d47a1);
   border: 1px solid #dce1e6;
 }
+
 .btn-secondary-action:hover {
   background-color: #f8f9fa;
   border-color: var(--primary-blue, #0d47a1);
   transform: translateY(-2px);
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .dashboard-stats-grid {
     grid-template-columns: 1fr;
   }

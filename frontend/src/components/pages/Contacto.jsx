@@ -1,16 +1,18 @@
+// Página de contacto
 import { useState } from "react";
 import "./Contacto.css";
 
-// Datos tomados de la captura. Sustitúyelos aquí por los datos reales de la tienda.
+// Datos de contacto
 const DATOS_CONTACTO = {
   telefono: "+51 987 654 321",
-  whatsapp: "51987654321", // Código de país y número, sin espacios ni el signo +.
+  whatsapp: "51987654321",
   correo: "ventas@electronova.com",
   direccion: "Av. Principal 123, Celendín - Perú",
   horario: { dias: "Lunes a sábado", horas: "8:00 a. m. a 6:00 p. m." },
-  referenciaMapa: "Celendín, Perú", // Mapa de referencia de la ciudad.
+  referenciaMapa: "Celendín, Perú",
 };
 
+// Iconografía SVG
 const TRAZOS = {
   telefono: ["M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z"],
   correo: ["M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z", "m22 6-10 7L2 6"],
@@ -32,6 +34,7 @@ function IconoContacto({ nombre, className = "" }) {
   );
 }
 
+// Componente principal
 function Contacto() {
   const [mensaje, setMensaje] = useState("");
   const [enlacePreparado, setEnlacePreparado] = useState("");
@@ -49,7 +52,6 @@ function Contacto() {
     const motivo = String(datos.get("motivo") || "").trim();
     const consulta = String(datos.get("mensaje") || "").trim();
 
-    // La validación nativa se complementa para rechazar textos hechos de espacios.
     if (nombre.length < 2 || consulta.length < 10) {
       const campo = formulario.elements.namedItem(nombre.length < 2 ? "nombre" : "mensaje");
       campo.setCustomValidity(nombre.length < 2
@@ -71,12 +73,12 @@ function Contacto() {
 
     const enlace = `https://wa.me/${DATOS_CONTACTO.whatsapp}?text=${encodeURIComponent(texto)}`;
     setEnlacePreparado(enlace);
-    // Abre un borrador. El usuario confirma el envío dentro de WhatsApp.
     window.open(enlace, "_blank", "noopener,noreferrer");
   }
 
   return (
     <main className="contacto-page">
+      {/* Cabecera Hero */}
       <section className="contacto-hero" aria-labelledby="contacto-titulo">
         <div className="contacto-contenedor contacto-hero-grid">
           <div className="contacto-presentacion">
@@ -108,6 +110,7 @@ function Contacto() {
         </div>
       </section>
 
+      {/* Medios de contacto y formulario */}
       <div className="contacto-contenedor contacto-cuerpo">
         <section className="contacto-datos" aria-label="Nuestros medios de contacto">
           <a className="contacto-dato" href={`tel:${DATOS_CONTACTO.telefono.replace(/[^\d+]/g, "")}`}>
@@ -188,6 +191,7 @@ function Contacto() {
             </form>
           </section>
 
+          {/* Mapa y atención directa */}
           <aside className="contacto-lateral" aria-label="Ubicación y atención directa">
             <section className="contacto-ubicacion" aria-labelledby="contacto-ubicacion-titulo">
               <div className="contacto-ubicacion-cabecera">

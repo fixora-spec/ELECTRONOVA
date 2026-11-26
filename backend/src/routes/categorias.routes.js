@@ -8,6 +8,7 @@ import {
 } from "../controllers/categorias.controller.js";
 import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.js";
 
+// Rutas de categorías
 const categoriasRoutes = Router();
 
 categoriasRoutes.get("/", getCategorias);

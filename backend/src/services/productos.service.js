@@ -1,42 +1,60 @@
 import { Producto } from "../models/Producto.js";
 import { Imagen } from "../models/Imagen.js";
+import { Categoria } from "../models/Categoria.js";
 import { comprimirImagenABase64 } from "../utils/image.util.js";
 
+// Utilidades de paginación e imágenes
+const consultarPaginado = async (query = {}, page = 1, limit = 10) => {
+  const pagina = Math.max(1, Number(page) || 1);
+  const limite = Math.max(1, Number(limit) || 10);
+  const skip = (pagina - 1) * limite;
+
+  const [productos, total] = await Promise.all([
+    Producto.find(query)
+      .populate("idCategoria")
+      .populate({ path: "imagenes", perDocumentLimit: 1 })
+      .sort({ updatedAt: -1, fechaRegistro: -1 })
+      .skip(skip)
+      .limit(limite),
+    Producto.countDocuments(query),
+  ]);
+
+  const totalPages = Math.ceil(total / limite) || 1;
+
+  return {
+    productos,
+    pagination: {
+      total,
+      page: pagina,
+      limit: limite,
+      totalPages,
+      hasNextPage: pagina < totalPages,
+      hasPrevPage: pagina > 1,
+    },
+  };
+};
+
+const guardarImagenesProducto = async (idProducto, archivos = []) => {
+  if (!archivos || archivos.length === 0) return;
+
+  const promesas = archivos.map(async (file) => {
+    const ubicacion = await comprimirImagenABase64(file.buffer);
+    const nuevaImagen = new Imagen({
+      idProducto,
+      tipo: "image/jpeg",
+      ubicacion,
+    });
+    return nuevaImagen.save();
+  });
+
+  await Promise.all(promesas);
+};
+
+// Servicio de productos
 const productosService = {
   async getProductos(page = 1, limit = 10, soloActivos = false) {
-    const pagina = Math.max(1, Number(page) || 1);
-    const limite = Math.max(1, Number(limit) || 10);
-    const skip = (pagina - 1) * limite;
-
     const query = soloActivos ? { estado: true } : {};
-
-    const [productos, total] = await Promise.all([
-      Producto.find(query)
-        .populate("idCategoria")
-        .populate({ path: "imagenes", perDocumentLimit: 1 })
-        .sort({ updatedAt: -1, fechaRegistro: -1 })
-        .skip(skip)
-        .limit(limite),
-      Producto.countDocuments(query),
-    ]);
-
-    const totalPages = Math.ceil(total / limite) || 1;
-
-    return {
-      productos,
-      pagination: {
-        total,
-        page: pagina,
-        limit: limite,
-        totalPages,
-        hasNextPage: pagina < totalPages,
-        hasPrevPage: pagina > 1,
-      },
-    };
-  },
-
-  async listarTodos(page, limit) {
-    return this.getProductos(page, limit);
+    return consultarPaginado(query, page, limit);
   },
 
   async getProductoById(id) {
@@ -51,10 +69,6 @@ const productosService = {
     return producto;
   },
 
-  async obtenerPorId(id) {
-    return this.getProductoById(id);
-  },
-
   async crearProducto(datosProducto, archivos = []) {
     if (archivos && archivos.length > 5) {
       throw new Error("No se pueden subir más de 5 imágenes por producto.");
@@ -63,27 +77,11 @@ const productosService = {
     const nuevoProducto = new Producto(datosProducto);
     const guardado = await nuevoProducto.save();
 
-    if (archivos && archivos.length > 0) {
-      const promesasImagenes = archivos.map(async (file) => {
-        const ubicacion = await comprimirImagenABase64(file.buffer);
-        const nuevaImagen = new Imagen({
-          idProducto: guardado._id,
-          tipo: "image/jpeg",
-          ubicacion,
-        });
-        return nuevaImagen.save();
-      });
-
-      await Promise.all(promesasImagenes);
-    }
+    await guardarImagenesProducto(guardado._id, archivos);
 
     return await Producto.findById(guardado._id)
       .populate("idCategoria")
       .populate("imagenes");
-  },
-
-  async crear(datos, archivos) {
-    return this.crearProducto(datos, archivos);
   },
 
   async actualizarProducto(id, datos, archivos = [], imagenesExistentesRaw) {
@@ -123,32 +121,13 @@ const productosService = {
       const imagenesDB = await Imagen.find({ idProducto: id });
       const imagenesABorrar = imagenesDB.filter((img) => !urlsExistentes.includes(img.ubicacion));
 
-      for (const img of imagenesABorrar) {
-        await Imagen.findByIdAndDelete(img._id);
-      }
-
-      if (archivos && archivos.length > 0) {
-        const promesasImagenes = archivos.map(async (file) => {
-          const ubicacion = await comprimirImagenABase64(file.buffer);
-          const nuevaImagen = new Imagen({
-            idProducto: id,
-            tipo: "image/jpeg",
-            ubicacion,
-          });
-          return nuevaImagen.save();
-        });
-
-        await Promise.all(promesasImagenes);
-      }
+      await Promise.all(imagenesABorrar.map((img) => Imagen.findByIdAndDelete(img._id)));
+      await guardarImagenesProducto(id, archivos);
     }
 
     return await Producto.findById(id)
       .populate("idCategoria")
       .populate("imagenes");
-  },
-
-  async actualizar(id, datos, archivos, raw) {
-    return this.actualizarProducto(id, datos, archivos, raw);
   },
 
   async eliminarProducto(id) {
@@ -161,82 +140,103 @@ const productosService = {
     return productoEliminado;
   },
 
-  async eliminar(id) {
-    return this.eliminarProducto(id);
-  },
+  async buscar(termino = "", page = 1, limit = 10, { categoria, soloActivos = false } = {}) {
+    const query = {};
 
-  async buscar(termino, page = 1, limit = 10) {
-    if (!termino || !termino.trim()) {
-      return this.getProductos(page, limit);
+    if (soloActivos) {
+      query.estado = true;
     }
 
-    const pagina = Math.max(1, Number(page) || 1);
-    const limite = Math.max(1, Number(limit) || 10);
-    const skip = (pagina - 1) * limite;
-    const terminoSanitizado = termino.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (categoria) {
+      query.idCategoria = categoria;
+    }
 
-    const query = {
-      $or: [
-        { nombre: { $regex: terminoSanitizado, $options: "i" } },
-        { descripcionCorta: { $regex: terminoSanitizado, $options: "i" } },
-        { descripcionCompleta: { $regex: terminoSanitizado, $options: "i" } },
-      ],
-    };
+    const textoLimpio = typeof termino === "string" ? termino.trim() : "";
+    if (!textoLimpio) {
+      return consultarPaginado(query, page, limit);
+    }
 
-    const [productos, total] = await Promise.all([
-      Producto.find(query)
-        .populate("idCategoria")
-        .populate({ path: "imagenes", perDocumentLimit: 1 })
-        .sort({ updatedAt: -1, fechaRegistro: -1 })
-        .skip(skip)
-        .limit(limite),
-      Producto.countDocuments(query),
+    const STOP_WORDS = new Set([
+      "de", "del", "la", "el", "los", "las", "un", "una", "unos", "unas",
+      "y", "en", "para", "por", "con", "a"
     ]);
 
-    const totalPages = Math.ceil(total / limite) || 1;
+    const allTokens = textoLimpio.split(/\s+/).filter(Boolean);
+    const significant = allTokens.filter((t) => !STOP_WORDS.has(t.toLowerCase()));
+    const tokens = significant.length > 0 ? significant : allTokens;
 
-    return {
-      productos,
-      pagination: {
-        total,
-        page: pagina,
-        limit: limite,
-        totalPages,
-        hasNextPage: pagina < totalPages,
-        hasPrevPage: pagina > 1,
-      },
+    const buildTokenRegex = (token) => {
+      const numUnitMatch = token.match(/^(\d+)([a-zA-Z]+)$/);
+      let basePattern;
+      if (numUnitMatch) {
+        basePattern = `${numUnitMatch[1]}\\s*${numUnitMatch[2]}`;
+      } else {
+        basePattern = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      const accentMap = {
+        a: "[aáàäâAÁÀÄÂ]",
+        e: "[eéèëêEÉÈËÊ]",
+        i: "[iíìïîIÍÌÏÎ]",
+        o: "[oóòöôOÓÒÖÔ]",
+        u: "[uúùüûUÚÙÜÛ]",
+        n: "[nñNÑ]",
+        á: "[aáàäâAÁÀÄÂ]",
+        é: "[eéèëêEÉÈËÊ]",
+        í: "[iíìïîIÍÌÏÎ]",
+        ó: "[oóòöôOÓÒÖÔ]",
+        ú: "[uúùüûUÚÙÜÛ]",
+        ñ: "[nñNÑ]",
+      };
+
+      const regexString = basePattern
+        .split("")
+        .map((char) => accentMap[char.toLowerCase()] || char)
+        .join("");
+
+      return new RegExp(regexString, "i");
     };
+
+    const tokenConditions = await Promise.all(
+      tokens.map(async (tok) => {
+        const reg = buildTokenRegex(tok);
+
+        const categoriasCoincidentes = await Categoria.find({
+          $or: [{ nombre: reg }, { descripcion: reg }],
+        }).select("_id");
+
+        const catIds = categoriasCoincidentes.map((c) => c._id);
+
+        const orFields = [
+          { nombre: reg },
+          { descripcionCorta: reg },
+          { descripcionCompleta: reg },
+          { especificacionesTec: reg },
+          { caracteristicas: reg },
+        ];
+
+        if (catIds.length > 0) {
+          orFields.push({ idCategoria: { $in: catIds } });
+        }
+
+        const numVal = Number(tok);
+        if (!isNaN(numVal) && tok.length <= 6) {
+          orFields.push({ precio: numVal });
+        }
+
+        return { $or: orFields };
+      })
+    );
+
+    if (tokenConditions.length > 0) {
+      query.$and = tokenConditions;
+    }
+
+    return consultarPaginado(query, page, limit);
   },
 
-  async filtrarPorCategoria(idCategoria, page = 1, limit = 10) {
-    const pagina = Math.max(1, Number(page) || 1);
-    const limite = Math.max(1, Number(limit) || 10);
-    const skip = (pagina - 1) * limite;
-    const query = idCategoria ? { idCategoria } : {};
-
-    const [productos, total] = await Promise.all([
-      Producto.find(query)
-        .populate("idCategoria")
-        .populate({ path: "imagenes", perDocumentLimit: 1 })
-        .sort({ updatedAt: -1, fechaRegistro: -1 })
-        .skip(skip)
-        .limit(limite),
-      Producto.countDocuments(query),
-    ]);
-
-    const totalPages = Math.ceil(total / limite) || 1;
-
-    return {
-      productos,
-      pagination: {
-        total,
-        page: pagina,
-        limit: limite,
-        totalPages,
-        hasNextPage: pagina < totalPages,
-        hasPrevPage: pagina > 1,
-      },
-    };
+  async filtrarPorCategoria(idCategoria, page = 1, limit = 10, { soloActivos = false } = {}) {
+    return this.buscar("", page, limit, { categoria: idCategoria, soloActivos });
   },
 };
 

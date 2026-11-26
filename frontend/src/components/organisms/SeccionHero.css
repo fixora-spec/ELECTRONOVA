@@ -1,3 +1,4 @@
+/* Contenedor Hero */
 .hero {
   display: flex;
   background-color: var(--primary-blue);
@@ -18,6 +19,7 @@
   background: linear-gradient(90deg, var(--primary-blue) 80%, transparent 100%);
 }
 
+/* Textos y beneficios */
 .hero-titulo {
   font-size: 3.5rem;
   line-height: 1.1;
@@ -63,11 +65,10 @@
   opacity: 0.8;
 }
 
+/* Imagen y fondo */
 .hero-imagen-fondo {
   flex: 1;
   position: relative;
-  background-image: url('');
-  /* Añade aquí la URL o ruta de tu imagen */
   background-size: cover;
   background-position: center;
 }
@@ -99,23 +100,9 @@
   max-width: 500px;
   z-index: 5;
   filter: drop-shadow(0px 10px 20px rgba(0, 0, 0, 0.5));
-
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-15px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
@@ -169,11 +156,9 @@
   0% {
     transform: translateX(50%) translateY(0px);
   }
-
   50% {
     transform: translateX(50%) translateY(-10px);
   }
-
   100% {
     transform: translateX(50%) translateY(0px);
   }

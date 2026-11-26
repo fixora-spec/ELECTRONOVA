@@ -1,5 +1,6 @@
 import { empresaService } from "../services/empresa.service.js";
 
+// Consulta de información de empresa
 const getEmpresa = async (req, res) => {
   try {
     const empresa = await empresaService.obtenerDatos();

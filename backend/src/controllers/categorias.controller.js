@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 import * as z from "zod";
 import { categoriasService } from "../services/categorias.service.js";
 import { categoriaSchema } from "../schemas/categorias.schema.js";
+import { resolverIdAdministrador } from "../middlewares/auth.middleware.js";
 
+// Listado y consulta de categorías
 const getCategorias = async (req, res) => {
   try {
     const categorias = await categoriasService.listarTodas();
@@ -30,12 +32,15 @@ const getCategoriaById = async (req, res) => {
   }
 };
 
+// Creación, actualización y eliminación
 const createCategoria = async (req, res) => {
   try {
     const validatedData = categoriaSchema.parse(req.body);
+    const idAdministrador = await resolverIdAdministrador(req);
+
     const categoriaGuardada = await categoriasService.crear({
       ...validatedData,
-      idAdministrador: req.admin?.id || req.body.idAdministrador,
+      idAdministrador,
     });
     return res.status(201).json(categoriaGuardada);
   } catch (error) {

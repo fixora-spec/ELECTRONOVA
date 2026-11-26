@@ -1,17 +1,15 @@
-import { configDotenv as confDotenv } from "dotenv";
 import { app } from "./app.js";
 import { connectDB } from "./config/db.js";
 
-confDotenv();
-
+// Configuración
 const PORT = Number(process.env.PORT) || 3000;
 
-// Conexión a Base de Datos
+// Conexión a base de datos
 await connectDB();
 
 // Inicio del servidor
-const server = app.listen(PORT, () => {
-  console.log(`[Servidor] ELECTRONOVA escuchando en: http://localhost:${PORT}/`);
+const server = app.listen(PORT, "0.0.0.0", () => {
+  console.log(`[Servidor] ELECTRONOVA escuchando en: http://localhost:${PORT}/ y en red local: http://192.168.1.5:${PORT}/`);
 });
 
 // Cierre controlado

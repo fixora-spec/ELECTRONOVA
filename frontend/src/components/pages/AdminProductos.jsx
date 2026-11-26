@@ -1,3 +1,4 @@
+// Administración de productos
 import { useState, useEffect } from 'react';
 import { productosService } from '../../services/productos.service';
 import { categoriasService } from '../../services/categorias.service';
@@ -6,32 +7,32 @@ import './AdminCategorias.css';
 import TablaProductosAdmin from '../organisms/TablaProductosAdmin';
 import ModalFormularioProducto from '../organisms/ModalFormularioProducto';
 
+const ESTADO_INICIAL_PRODUCTO = {
+  _id: '',
+  nombre: '',
+  precio: '',
+  idCategoria: '',
+  descripcionCorta: '',
+  descripcionCompleta: '',
+  especificacionesTec: '',
+  caracteristicas: '',
+  productoDestacado: false,
+  estado: true,
+  imagenes: [],
+  previewImagenes: []
+};
+
 function AdminProductos() {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
-  
+
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
-  
-  // Estado inicial del producto
-  const estadoInicial = {
-    _id: '',
-    nombre: '',
-    precio: '',
-    idCategoria: '',
-    descripcionCorta: '',
-    descripcionCompleta: '',
-    especificacionesTec: '',
-    caracteristicas: '',
-    productoDestacado: false,
-    estado: true,
-    imagenes: [],
-    previewImagenes: []
-  };
-  const [productoActual, setProductoActual] = useState(estadoInicial);
+  const [productoActual, setProductoActual] = useState(ESTADO_INICIAL_PRODUCTO);
 
+  // Carga de datos
   useEffect(() => {
     cargarDatos();
   }, []);
@@ -50,28 +51,29 @@ function AdminProductos() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
+  // Acciones de modal y estado
   const abrirModalNuevo = () => {
     setModoEdicion(false);
-    setProductoActual(estadoInicial);
+    setProductoActual(ESTADO_INICIAL_PRODUCTO);
     setModalAbierto(true);
   };
 
   const abrirModalEditar = async (prod) => {
     try {
       setLoading(true);
-      // Obtiene el producto completo con TODAS las imágenes para editar
       const productoCompleto = await productosService.getById(prod._id || prod.idProducto);
-      
+
       setModoEdicion(true);
       setProductoActual({
         ...productoCompleto,
         idCategoria: productoCompleto.idCategoria?._id || productoCompleto.idCategoria,
         imagenes: [],
-        previewImagenes: productoCompleto.imagenes && productoCompleto.imagenes.length > 0 
-          ? productoCompleto.imagenes.map(img => img.ubicacion) 
-          : []
+        previewImagenes:
+          productoCompleto.imagenes && productoCompleto.imagenes.length > 0
+            ? productoCompleto.imagenes.map((img) => img.ubicacion)
+            : []
       });
       setModalAbierto(true);
     } catch (err) {
@@ -95,7 +97,7 @@ function AdminProductos() {
   };
 
   const handleToggleEstado = async (prod) => {
-    const nuevoEstado = prod.estado === false ? true : false;
+    const nuevoEstado = prod.estado === false;
     try {
       const formData = new FormData();
       formData.append('estado', nuevoEstado);
@@ -107,7 +109,7 @@ function AdminProductos() {
     }
   };
 
-  const productosFiltrados = productos.filter(p => 
+  const productosFiltrados = productos.filter((p) =>
     p.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
@@ -115,6 +117,7 @@ function AdminProductos() {
 
   return (
     <div className="admin-modulo">
+      {/* Cabecera */}
       <div className="admin-cabecera-modulo">
         <div>
           <h2>Gestión de Productos</h2>
@@ -125,20 +128,22 @@ function AdminProductos() {
         </button>
       </div>
 
+      {/* Buscador */}
       <div className="admin-controles">
         <div className="admin-buscador">
           <Search size={18} className="icono-buscar" />
-          <input 
-            type="text" 
-            placeholder="Buscar producto por nombre..." 
+          <input
+            type="text"
+            placeholder="Buscar producto por nombre..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
         </div>
       </div>
 
-      <TablaProductosAdmin 
-        productos={productosFiltrados} 
+      {/* Tabla y modal */}
+      <TablaProductosAdmin
+        productos={productosFiltrados}
         categorias={categorias}
         onEdit={abrirModalEditar}
         onDelete={handleEliminar}
@@ -146,7 +151,7 @@ function AdminProductos() {
       />
 
       {modalAbierto && (
-        <ModalFormularioProducto 
+        <ModalFormularioProducto
           modoEdicion={modoEdicion}
           productoInicial={productoActual}
           categorias={categorias}
@@ -162,6 +167,3 @@ function AdminProductos() {
 }
 
 export { AdminProductos };
-
-
-

@@ -1,4 +1,4 @@
-
+// Tabla de administración de categorías
 import { Edit2, Trash2 } from 'lucide-react';
 
 const TablaCategoriasAdmin = ({ categorias, onEdit, onDelete }) => {

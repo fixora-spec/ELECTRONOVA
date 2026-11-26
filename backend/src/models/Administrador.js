@@ -1,13 +1,13 @@
 import { Schema, model } from "mongoose";
 import argon2 from "argon2";
-import bcrypt from "bcrypt";
 
+// Esquema de Administrador
 const AdministradorSchema = new Schema(
   {
     nombre: { type: String, required: true },
     correo: { type: String, required: true, unique: true },
     contraseña: { type: String, required: true },
-    rol: { type: String, default: "admin" },
+    rol: { type: String, default: "ADMINISTRATOR" },
   },
   {
     timestamps: false,
@@ -15,22 +15,24 @@ const AdministradorSchema = new Schema(
   }
 );
 
-AdministradorSchema.pre("save", async function () {
-  if (!this.isModified("contraseña")) return;
-  if (this.contraseña && this.contraseña.startsWith("$argon2")) return;
-  this.contraseña = await argon2.hash(this.contraseña);
-});
+// Hooks y métodos de contraseña
+export const configurarPasswordSchema = (schema) => {
+  schema.pre("save", async function () {
+    if (!this.isModified("contraseña")) return;
+    if (this.contraseña && this.contraseña.startsWith("$argon2")) return;
+    this.contraseña = await argon2.hash(this.contraseña);
+  });
 
-AdministradorSchema.methods.comparePassword = async function (candidatePassword) {
-  try {
-    if (this.contraseña.startsWith("$argon2")) {
+  schema.methods.comparePassword = async function (candidatePassword) {
+    try {
       return await argon2.verify(this.contraseña, candidatePassword);
+    } catch {
+      return false;
     }
-    return await bcrypt.compare(candidatePassword, this.contraseña);
-  } catch {
-    return false;
-  }
+  };
 };
+
+configurarPasswordSchema(AdministradorSchema);
 
 const Administrador = model("Administrador", AdministradorSchema);
 

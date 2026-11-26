@@ -1,13 +1,17 @@
 import * as z from "zod";
 
+// Esquema de producto
 export const productoSchema = z.object({
   nombre: z
     .string({ required_error: "El nombre del producto es obligatorio." })
     .trim()
     .min(2, "El nombre debe tener al menos 2 caracteres."),
-  precio: z.coerce
-    .number({ invalid_type_error: "El precio debe ser un número." })
-    .min(0, "El precio no puede ser negativo."),
+  precio: z.preprocess(
+    (val) => (val === undefined || val === null || val === "" ? undefined : Number(val)),
+    z
+      .number({ required_error: "El precio es obligatorio.", invalid_type_error: "El precio debe ser un número." })
+      .min(0, "El precio no puede ser negativo.")
+  ),
   idCategoria: z
     .string({ required_error: "La categoría es obligatoria." })
     .min(1, "La categoría es obligatoria."),

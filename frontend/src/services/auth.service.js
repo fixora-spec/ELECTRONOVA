@@ -1,5 +1,6 @@
 import api from './api';
 
+// Servicio de autenticación
 export const authService = {
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
@@ -15,7 +16,12 @@ export const authService = {
     const response = await api.post('/auth/logout');
     return response.data;
   },
-  
+
+  refreshToken: async () => {
+    const response = await api.post('/auth/refresh');
+    return response.data;
+  },
+
   forgotPassword: async (correo) => {
     const response = await api.post('/auth/forgot-password', { correo });
     return response.data;
@@ -29,5 +35,5 @@ export const authService = {
   checkSession: async () => {
     const response = await api.get('/auth/me');
     return response.data;
-  }
+  },
 };
