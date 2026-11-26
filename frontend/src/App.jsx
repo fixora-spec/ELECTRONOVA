@@ -1,99 +1,68 @@
-import { useState } from "react";
-import "./App.css";
+import { useEffect } from "react";
+import { Outlet, Route, Routes, useLocation } from "react-router-dom";
 import Encabezado from "./components/organisms/Encabezado";
 import PieDePagina from "./components/organisms/PieDePagina";
-import { Route, Routes } from "react-router-dom";
 import { PaginaInicio } from "./components/pages/PaginaInicio";
 import { Productos } from "./components/pages/Productos";
-
 import { Nosotros } from "./components/pages/Nosotros";
 import { Contacto } from "./components/pages/Contacto";
 import { Login } from "./components/pages/Login";
 import { Register } from "./components/pages/Register";
 import { ForgotPassword } from "./components/pages/ForgotPassword";
 import { ResetPassword } from "./components/pages/ResetPassword";
-
 import { DashboardAdmin } from "./components/pages/DashboardAdmin";
 import { AdminCategorias } from "./components/pages/AdminCategorias";
 import { AdminProductos } from "./components/pages/AdminProductos";
 import AdminLayout from "./components/templates/AdminLayout";
 import RutaPrivada from "./components/templates/RutaPrivada";
 import { AuthProvider } from "./context/AuthContext.jsx";
-
 import ErrorBoundary from "./components/utilities/ErrorBoundary";
 
-function App() {
-  const [theme, setTheme] = useState("light");
+// Restablecer el scroll al inicio en cada cambio de ruta
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [pathname]);
+
+  return null;
+};
+
+// Plantilla pública
+const PublicLayout = () => (
+  <>
+    <Encabezado />
+    <Outlet />
+    <PieDePagina />
+  </>
+);
+
+// Enrutador principal
+function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <ScrollToTop />
         <Routes>
-          <Route path="/" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <PaginaInicio />
-              <PieDePagina />
-            </>
-          } />
-          <Route path="/productos" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <Productos />
-              <PieDePagina />
-            </>
-          } />
-          <Route path="/nosotros" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <Nosotros />
-              <PieDePagina />
-            </>
-          } />
-          <Route path="/contacto" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <Contacto />
-              <PieDePagina />
-            </>
-          } />
-          
-          <Route path="/login" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <Login />
-              <PieDePagina />
-            </>
-          } />
-          <Route path="/registro" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <Register />
-              <PieDePagina />
-            </>
-          } />
-          <Route path="/register" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <Register />
-              <PieDePagina />
-            </>
-          } />
-          <Route path="/forgot-password" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <ForgotPassword />
-              <PieDePagina />
-            </>
-          } />
-          <Route path="/reset-password" element={
-            <>
-              <Encabezado theme={theme} setTheme={setTheme} />
-              <ResetPassword />
-              <PieDePagina />
-            </>
-          } />
+          {/* Rutas públicas */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<PaginaInicio />} />
+            <Route path="/productos" element={<Productos />} />
+            <Route path="/nosotros" element={<Nosotros />} />
+            <Route path="/contacto" element={<Contacto />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/registro" element={<Register />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+          </Route>
 
+          {/* Rutas de administración */}
           <Route element={<RutaPrivada />}>
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<DashboardAdmin />} />

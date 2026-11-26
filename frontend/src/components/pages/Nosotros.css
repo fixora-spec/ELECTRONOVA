@@ -1,468 +1,239 @@
+/* Contenedor general */
 .nosotros {
-    width: 100%;
-    overflow: hidden;
+  width: 100%;
+  overflow: hidden;
 }
 
-
-/* ==========================
-   HERO
-========================== */
-
-
+/* Hero */
 .hero-nosotros {
-
-    display: flex;
-    min-height: 600px;
-    background: #062b5c;
-
+  display: flex;
+  min-height: 600px;
+  background: #062b5c;
 }
-
-
 
 .hero-contenido {
-
-    width: 50%;
-    padding: 80px 70px;
-    color: white;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
+  width: 50%;
+  padding: 80px 70px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-
-
 
 .etiqueta {
-
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    color: white;
-    font-size: 14px;
-    letter-spacing: 3px;
-    font-weight: 600;
-
-    margin-bottom: 25px;
-
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  font-size: 14px;
+  letter-spacing: 3px;
+  font-weight: 600;
+  margin-bottom: 25px;
 }
-
-
 
 .etiqueta::before {
-
-    content: "";
-
-    width: 35px;
-    height: 4px;
-
-    background: #f9c400;
-
+  content: "";
+  width: 35px;
+  height: 4px;
+  background: #f9c400;
 }
-
-
 
 .hero-contenido h1 {
-
-    font-size: 64px;
-
-    line-height: 1.1;
-
-    margin: 0 0 25px;
-
-    font-weight: 800;
-
+  font-size: 64px;
+  line-height: 1.1;
+  margin: 0 0 25px;
+  font-weight: 800;
 }
-
-
 
 .hero-contenido h1 strong {
-
-    color: #f9c400;
-
+  color: #f9c400;
 }
-
-
 
 .hero-contenido p {
-
-    max-width: 520px;
-
-    font-size: 18px;
-
-    line-height: 1.7;
-
-    color: #e6eef8;
-
-    margin-bottom: 35px;
-
+  max-width: 520px;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #e6eef8;
+  margin-bottom: 35px;
 }
-
-
 
 .hero-contenido button {
-
-    width: 160px;
-
-    padding: 15px 25px;
-
-    border: none;
-
-    border-radius: 30px;
-
-    background: #f9c400;
-
-    color: #062b5c;
-
-    font-size: 15px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition: .3s;
-
+  width: 160px;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 30px;
+  background: #f9c400;
+  color: #062b5c;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
 }
-
-
 
 .hero-contenido button:hover {
-
-    transform: translateY(-3px);
-
+  transform: translateY(-3px);
 }
-
-
 
 .hero-imagen {
-
-    width: 50%;
-
+  width: 50%;
 }
-
-
 
 .hero-imagen img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-
-
-/* ==========================
-   BENEFICIOS
-========================== */
-
-
+/* Beneficios */
 .beneficios {
-
-    display: flex;
-
-    justify-content: center;
-
-    gap: 30px;
-
-    padding: 50px 8%;
-
-    background: white;
-
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 50px 8%;
+  background: white;
 }
-
-
 
 .beneficio {
-
-    flex: 1;
-
-    padding: 25px;
-
-    border-right: 1px solid #ddd;
-
+  flex: 1;
+  padding: 25px;
+  border-right: 1px solid #ddd;
 }
-
-
 
 .beneficio:last-child {
-
-    border-right: none;
-
+  border-right: none;
 }
-
-
 
 .beneficio h3 {
-
-    color: #062b5c;
-
-    font-size: 22px;
-
-    margin-bottom: 10px;
-
+  color: #062b5c;
+  font-size: 22px;
+  margin-bottom: 10px;
 }
-
-
 
 .beneficio p {
-
-    color: #555;
-
-    line-height: 1.6;
-
+  color: #555;
+  line-height: 1.6;
 }
 
-
-
-/* ==========================
-   MISION Y VISION
-========================== */
-
-
+/* Misión y Visión */
 .mision-vision {
-
-    display: flex;
-
-    gap: 50px;
-
-    padding: 80px 8%;
-
-    background: #f5f8fc;
-
+  display: flex;
+  gap: 50px;
+  padding: 80px 8%;
+  background: #f5f8fc;
 }
-
-
 
 .esencia {
-
-    width: 40%;
-
+  width: 40%;
 }
-
-
 
 .esencia span {
-
-    color: #062b5c;
-
-    letter-spacing: 3px;
-
-    font-size: 14px;
-
-    font-weight: bold;
-
+  color: #062b5c;
+  letter-spacing: 3px;
+  font-size: 14px;
+  font-weight: bold;
 }
-
-
 
 .esencia h2 {
-
-    font-size: 48px;
-
-    color: #062b5c;
-
-    margin: 20px 0;
-
+  font-size: 48px;
+  color: #062b5c;
+  margin: 20px 0;
 }
-
-
 
 .esencia p {
-
-    color: #555;
-
-    line-height: 1.7;
-
+  color: #555;
+  line-height: 1.7;
 }
-
-
-
 
 .tarjetas-mision {
-
-    width: 60%;
-
-    display: flex;
-
-    gap: 25px;
-
+  width: 60%;
+  display: flex;
+  gap: 25px;
 }
-
-
 
 .tarjeta {
-
-    background: white;
-
-    padding: 25px;
-
-    border-radius: 15px;
-
-    box-shadow: 0 10px 25px rgba(0,0,0,.08);
-
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
-
-
 
 .tarjeta img {
-
-    width: 100%;
-
-    height: 220px;
-
-    object-fit: cover;
-
-    border-radius: 12px;
-
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
 }
-
-
 
 .tarjeta h3 {
-
-    color: #062b5c;
-
-    font-size: 25px;
-
-    margin-top: 20px;
-
+  color: #062b5c;
+  font-size: 25px;
+  margin-top: 20px;
 }
-
-
 
 .tarjeta p {
-
-    color: #555;
-
-    line-height: 1.6;
-
+  color: #555;
+  line-height: 1.6;
 }
 
-
-
-/* ==========================
-   SOLUCIONES
-========================== */
-
-
+/* Soluciones */
 .soluciones {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 50px;
-
-    padding: 80px 8%;
-
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  padding: 80px 8%;
 }
-
-
 
 .soluciones-imagen {
-
-    width: 50%;
-
+  width: 50%;
 }
-
-
 
 .soluciones-imagen img {
-
-    width: 100%;
-
-    border-radius: 15px;
-
+  width: 100%;
+  border-radius: 15px;
 }
-
-
 
 .soluciones-texto {
-
-    width: 50%;
-
+  width: 50%;
 }
-
-
 
 .soluciones-texto h2 {
-
-    font-size: 45px;
-
-    color: #062b5c;
-
+  font-size: 45px;
+  color: #062b5c;
 }
-
-
 
 .soluciones-texto p {
-
-    font-size: 18px;
-
-    color: #555;
-
-    line-height: 1.7;
-
+  font-size: 18px;
+  color: #555;
+  line-height: 1.7;
 }
 
+/* Responsive */
+@media (max-width: 900px) {
+  .hero-nosotros,
+  .beneficios,
+  .mision-vision,
+  .soluciones {
+    flex-direction: column;
+  }
 
+  .hero-contenido,
+  .hero-imagen,
+  .esencia,
+  .tarjetas-mision,
+  .soluciones-imagen,
+  .soluciones-texto {
+    width: 100%;
+  }
 
-/* ==========================
-   RESPONSIVE
-========================== */
+  .hero-contenido {
+    padding: 50px 30px;
+  }
 
+  .hero-contenido h1 {
+    font-size: 45px;
+  }
 
-@media(max-width:900px){
-
-
-    .hero-nosotros,
-    .beneficios,
-    .mision-vision,
-    .soluciones {
-
-        flex-direction: column;
-
-    }
-
-
-
-    .hero-contenido,
-    .hero-imagen,
-    .esencia,
-    .tarjetas-mision,
-    .soluciones-imagen,
-    .soluciones-texto {
-
-        width: 100%;
-
-    }
-
-
-
-    .hero-contenido {
-
-        padding: 50px 30px;
-
-    }
-
-
-
-    .hero-contenido h1 {
-
-        font-size: 45px;
-
-    }
-
-
-
-    .tarjetas-mision {
-
-        flex-direction: column;
-
-    }
-
+  .tarjetas-mision {
+    flex-direction: column;
+  }
 }

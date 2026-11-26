@@ -11,13 +11,15 @@ import {
   Shield
 } from 'lucide-react';
 
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import logoImg from '../../assets/logo.png';
 import './Encabezado.css';
 
 const Encabezado = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -26,6 +28,16 @@ const Encabezado = () => {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
+  const handleLogout = async () => {
+    await logout();
+    closeMenu();
+    navigate('/login');
+  };
+
+  const nombreUsuario = user?.nombres ? `${user.nombres} ${user.apellidos || ''}`.trim() : (user?.correo || 'Usuario');
+  const primerNombre = user?.nombres ? user.nombres.split(' ')[0] : (user?.correo ? user.correo.split('@')[0] : 'Usuario');
+  const inicialUsuario = (primerNombre || 'U').charAt(0).toUpperCase();
 
   return (
     <header className="encabezado">
@@ -37,7 +49,7 @@ const Encabezado = () => {
         >
           <div className="logo-icono">
             <img 
-              src="/src/assets/logo.png" 
+              src={logoImg} 
               alt="Electronova"
             />
           </div>
@@ -57,7 +69,7 @@ const Encabezado = () => {
             <div className="menu-header-mobile">
               <div className="menu-logo">
                 <img 
-                  src="/src/assets/logo.png"
+                  src={logoImg}
                   alt="Electronova"
                 />
                 <span>ELECTRONOVA</span>
@@ -122,7 +134,7 @@ const Encabezado = () => {
                       <Shield size={16}/>
                     </div>
                     <div>
-                      <div className="usuario-nombre-mobile">{user?.nombre || 'Administrador'}</div>
+                      <div className="usuario-nombre-mobile">{nombreUsuario || 'Administrador'}</div>
                       <span className="usuario-badge-mobile">Administrador</span>
                     </div>
                   </div>
@@ -135,7 +147,7 @@ const Encabezado = () => {
                       Panel Admin
                     </Link>
                     <button
-                      onClick={() => { logout(); closeMenu(); }}
+                      onClick={handleLogout}
                       className="btn-salir-mobile"
                     >
                       <LogOut size={16} /> Salir
@@ -146,15 +158,15 @@ const Encabezado = () => {
                 <div className="usuario-mobile-card">
                   <div className="usuario-mobile-info">
                     <div className="usuario-avatar-circulo">
-                      {(user?.nombre || 'U').charAt(0).toUpperCase()}
+                      {inicialUsuario}
                     </div>
                     <div>
-                      <div className="usuario-nombre-mobile">{user?.nombre || 'Usuario'}</div>
-                      <span className="usuario-email-mobile">{user?.correo || user?.email || 'Cliente'}</span>
+                      <div className="usuario-nombre-mobile">{nombreUsuario}</div>
+                      <span className="usuario-email-mobile">{user?.correo || 'Cliente'}</span>
                     </div>
                   </div>
                   <button
-                    onClick={() => { logout(); closeMenu(); }}
+                    onClick={handleLogout}
                     className="btn-salir-mobile"
                   >
                     <LogOut size={16} /> Cerrar sesión
@@ -190,11 +202,11 @@ const Encabezado = () => {
                     </div>
                     <div className="usuario-textos">
                       <span className="usuario-saludo">Admin:</span>
-                      <span className="usuario-nombre">{user?.nombre?.split(' ')[0] || 'Panel'}</span>
+                      <span className="usuario-nombre">{primerNombre || 'Panel'}</span>
                     </div>
                   </Link>
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     title="Cerrar sesión"
                     className="btn-salir-header"
                   >
@@ -206,15 +218,15 @@ const Encabezado = () => {
                 <div className="usuario-sesion-header">
                   <div className="usuario-info-pill">
                     <div className="usuario-avatar-circulo">
-                      {(user?.nombre || 'U').charAt(0).toUpperCase()}
+                      {inicialUsuario}
                     </div>
                     <div className="usuario-textos">
                       <span className="usuario-saludo">Hola,</span>
-                      <span className="usuario-nombre">{user?.nombre?.split(' ')[0] || 'Usuario'}</span>
+                      <span className="usuario-nombre">{primerNombre}</span>
                     </div>
                   </div>
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     title="Cerrar sesión"
                     className="btn-salir-header"
                   >

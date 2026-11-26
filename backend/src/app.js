@@ -12,12 +12,12 @@ import { categoriasRoutes } from "./routes/categorias.routes.js";
 import { empresaRoutes } from "./routes/empresa.routes.js";
 import { usuariosRoutes } from "./routes/usuarios.routes.js";
 
+// Configuración inicial
 dotenv.config();
-
 const app = express();
-
 app.disable("x-powered-by");
 
+// Seguridad y CORS
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -30,24 +30,31 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173",
   "http://127.0.0.1:5173",
+  "http://192.168.1.5:5173",
 ].filter(Boolean);
+
+const isLocalNetworkOrigin = (origin) =>
+  /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+)(:\d+)?$/.test(
+    origin
+  );
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || isLocalNetworkOrigin(origin)) {
         return callback(null, true);
       }
       return callback(new Error("Bloqueado por política CORS"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
-app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+// Middlewares globales
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
 app.use((req, res, next) => {
@@ -63,16 +70,22 @@ app.use((req, res, next) => {
 
 app.use(apiLimiter);
 
+// Rutas
 app.get("/", (req, res) => {
   res.status(200).json({ message: "API ELECTRONOVA operativa" });
 });
 
-app.use("/auth", authRoutes);
-app.use("/productos", productosRoutes);
-app.use("/categorias", categoriasRoutes);
-app.use("/empresa", empresaRoutes);
-app.use("/usuarios", usuariosRoutes);
+app.use(["/auth", "/api/auth"], authRoutes);
+app.use(["/refresh", "/api/refresh"], (req, res, next) => {
+  req.url = "/refresh";
+  authRoutes(req, res, next);
+});
+app.use(["/productos", "/api/productos"], productosRoutes);
+app.use(["/categorias", "/api/categorias"], categoriasRoutes);
+app.use(["/empresa", "/api/empresa"], empresaRoutes);
+app.use(["/usuarios", "/api/usuarios"], usuariosRoutes);
 
+// Manejo de errores
 app.use((req, res) => {
   res.status(404).json({
     error: "Not Found",

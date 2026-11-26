@@ -1,18 +1,19 @@
 import api from './api';
 
+// Configuración de cabeceras para formularios
+const getMultipartConfig = (payload) =>
+  payload instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+
+// Servicio de productos
 export const productosService = {
-  /**
-   * Obtener productos con paginación desde el backend
-   */
-  getPaginated: async ({ page = 1, limit = 12, categoria = '', q = '' } = {}) => {
-    let response;
-    if (q && q.trim()) {
-      response = await api.get('/productos/buscar', { params: { q: q.trim(), page, limit } });
-    } else if (categoria) {
-      response = await api.get('/productos/filtrar', { params: { categoria, page, limit } });
-    } else {
-      response = await api.get('/productos', { params: { page, limit } });
-    }
+  getPaginated: async ({ page = 1, limit = 12, categoria = '', q = '', soloActivos = false } = {}) => {
+    const params = { page, limit };
+    if (q && q.trim()) params.q = q.trim();
+    if (categoria) params.categoria = categoria;
+    if (soloActivos) params.soloActivos = true;
+
+    const endpoint = params.q ? '/productos/buscar' : (params.categoria ? '/productos/filtrar' : '/productos');
+    const response = await api.get(endpoint, { params });
     return response.data;
   },
 
@@ -26,37 +27,13 @@ export const productosService = {
     return response.data?.data ? response.data.data : response.data;
   },
 
-  search: async (params = {}) => {
-    const response = await api.get('/productos/buscar', { params });
-    return response.data?.data ? response.data.data : response.data;
-  },
-
-  filter: async (params = {}) => {
-    const response = await api.get('/productos/filtrar', { params });
-    return response.data?.data ? response.data.data : response.data;
-  },
-
   create: async (productoData) => {
-    let data = productoData;
-    let config = {};
-
-    if (productoData instanceof FormData) {
-      config = { headers: { 'Content-Type': 'multipart/form-data' } };
-    }
-
-    const response = await api.post('/productos', data, config);
+    const response = await api.post('/productos', productoData, getMultipartConfig(productoData));
     return response.data?.data ? response.data.data : response.data;
   },
 
   update: async (id, productoData) => {
-    let data = productoData;
-    let config = {};
-
-    if (productoData instanceof FormData) {
-      config = { headers: { 'Content-Type': 'multipart/form-data' } };
-    }
-
-    const response = await api.put(`/productos/${id}`, data, config);
+    const response = await api.put(`/productos/${id}`, productoData, getMultipartConfig(productoData));
     return response.data?.data ? response.data.data : response.data;
   },
 

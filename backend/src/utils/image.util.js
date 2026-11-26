@@ -1,5 +1,6 @@
 import sharp from "sharp";
 
+// Compresión y conversión de imagen a Base64
 const comprimirImagenABase64 = async (buffer) => {
   const compressedBuffer = await sharp(buffer)
     .resize(800, 800, { fit: "inside", withoutEnlargement: true })

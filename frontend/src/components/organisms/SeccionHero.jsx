@@ -1,3 +1,4 @@
+// Sección Hero de portada
 import { useNavigate } from 'react-router-dom';
 import { Truck, ShieldCheck, Headset } from 'lucide-react';
 import Boton from '../atoms/Boton';
@@ -9,6 +10,7 @@ const SeccionHero = () => {
 
   return (
     <section className="hero">
+      {/* Contenido principal */}
       <div className="hero-contenido">
         <h1 className="hero-titulo">
           Todo en <br />
@@ -20,6 +22,7 @@ const SeccionHero = () => {
         </p>
         <Boton variant="secundario" onClick={() => navigate('/productos')}>Ver catálogo</Boton>
 
+        {/* Beneficios */}
         <div className="hero-beneficios">
           <div className="beneficio">
             <Truck size={24} />
@@ -44,6 +47,8 @@ const SeccionHero = () => {
           </div>
         </div>
       </div>
+
+      {/* Imagen destacada */}
       <div className="hero-imagen-fondo">
         <div className="hero-overlay"></div>
         <img src={imagenInicio} alt="Productos Eléctricos" className="hero-imagen-destacada" />
@@ -52,4 +57,5 @@ const SeccionHero = () => {
     </section>
   );
 };
+
 export default SeccionHero;

@@ -1,5 +1,6 @@
 import { usuariosService } from "../services/usuarios.service.js";
 
+// Listado de usuarios
 const getUsuarios = async (req, res) => {
   try {
     const usuarios = await usuariosService.listarTodos();

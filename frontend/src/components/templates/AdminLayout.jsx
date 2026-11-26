@@ -1,3 +1,4 @@
+// Plantilla del panel administrativo
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -8,8 +9,9 @@ export default function AdminLayout() {
   const { admin, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const handleLogout = () => {
-    logout();
+
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -19,6 +21,7 @@ export default function AdminLayout() {
 
   return (
     <div className="admin-layout">
+      {/* Barra lateral */}
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
@@ -31,45 +34,44 @@ export default function AdminLayout() {
         </div>
 
         <div className="sidebar-user">
-          <div className="user-avatar">{admin?.nombre?.charAt(0).toUpperCase() || 'A'}</div>
+          <div className="user-avatar">{(admin?.nombres || admin?.correo || 'A').charAt(0).toUpperCase()}</div>
           {sidebarOpen && (
             <div className="user-info">
-              <span className="user-name">{admin?.nombre || 'Administrador'}</span>
+              <span className="user-name">{admin?.nombres ? `${admin.nombres} ${admin.apellidos || ''}`.trim() : (admin?.correo || 'Administrador')}</span>
               <span className="user-role">Super Admin</span>
             </div>
           )}
         </div>
 
         <nav className="sidebar-nav">
-          <NavLink 
-            to="/admin/dashboard" 
-            className={({isActive}) => isActive ? "nav-item active" : "nav-item"}
+          <NavLink
+            to="/admin/dashboard"
+            className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}
             end
           >
             <LayoutDashboard size={20} />
             {sidebarOpen && <span>Resumen</span>}
           </NavLink>
 
-          <NavLink 
-            to="/admin/categorias" 
-            className={({isActive}) => isActive ? "nav-item active" : "nav-item"}
+          <NavLink
+            to="/admin/categorias"
+            className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}
           >
             <FolderTree size={20} />
             {sidebarOpen && <span>Categorías</span>}
           </NavLink>
 
-          <NavLink 
-            to="/admin/productos" 
-            className={({isActive}) => isActive ? "nav-item active" : "nav-item"}
+          <NavLink
+            to="/admin/productos"
+            className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}
           >
             <PackageSearch size={20} />
             {sidebarOpen && <span>Productos</span>}
           </NavLink>
         </nav>
-
-
       </aside>
 
+      {/* Contenido principal */}
       <main className="admin-main">
         <div className="admin-topbar">
           <button className="btn-toggle-sidebar" onClick={toggleSidebar}>

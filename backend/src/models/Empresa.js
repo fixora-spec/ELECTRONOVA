@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 
+// Esquema de Empresa
 const EmpresaSchema = new Schema(
   {
     nombre: { type: String, required: true },

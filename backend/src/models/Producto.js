@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 
+// Esquema de Producto
 const ProductoSchema = new Schema(
   {
     nombre: { type: String, required: true },
@@ -23,6 +24,7 @@ const ProductoSchema = new Schema(
   }
 );
 
+// Relación virtual con imágenes
 ProductoSchema.virtual("imagenes", {
   ref: "Imagen",
   localField: "_id",

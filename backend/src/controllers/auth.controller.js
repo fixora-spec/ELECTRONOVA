@@ -2,211 +2,316 @@ import * as z from "zod";
 import { authService } from "../services/auth.service.js";
 import { registerUserSchema, loginUserSchema } from "../schemas/auth.schema.js";
 
-class AuthController {
-  async register(req, res) {
-    const {
-      firstname,
-      lastname,
+// Opciones de cookies
+const getRefreshTokenCookieOptions = () => {
+  const isProd = process.env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  };
+};
+
+const getAuthTokenCookieOptions = () => {
+  const isProd = process.env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    maxAge: 15 * 60 * 1000,
+    path: "/",
+  };
+};
+
+// Registro de usuario
+const register = async (req, res) => {
+  const {
+    firstname,
+    lastname,
+    nombres,
+    apellidos,
+    gender,
+    birthdate,
+    email,
+    password,
+    rePassword,
+    nombre,
+    correo,
+    contraseña,
+    contrasena,
+    confirmarContraseña,
+    rol,
+  } = req.body;
+
+  const resolvedFirstname = firstname || nombres || (nombre ? nombre.split(" ")[0] : undefined);
+  const resolvedLastname =
+    lastname || apellidos || (nombre ? nombre.split(" ").slice(1).join(" ") || nombre : undefined);
+  const resolvedEmail = email || correo;
+  const resolvedPassword = password || contraseña || contrasena;
+  const resolvedRePassword = rePassword || confirmarContraseña || resolvedPassword;
+  const resolvedRol = rol || "CLIENTE";
+  const resolvedNombreCompleto =
+    [resolvedFirstname, resolvedLastname].filter(Boolean).join(" ").trim() || nombre;
+
+  try {
+    await registerUserSchema.parseAsync({
+      firstname: resolvedFirstname,
+      lastname: resolvedLastname,
+      nombres: resolvedFirstname,
+      apellidos: resolvedLastname,
+      nombre: resolvedNombreCompleto,
       gender,
       birthdate,
-      email,
-      password,
-      rePassword,
-      role,
-      nombre,
-      correo,
-      contraseña,
-      confirmarContraseña,
-      rol,
-    } = req.body;
+      email: resolvedEmail,
+      correo: resolvedEmail,
+      password: resolvedPassword,
+      contraseña: resolvedPassword,
+      rePassword: resolvedRePassword,
+      confirmarContraseña: resolvedRePassword,
+      rol: resolvedRol,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.json({ issues: error.issues });
+    }
+  }
 
-    const resolvedFirstname = firstname || (nombre ? nombre.split(" ")[0] : undefined);
-    const resolvedLastname = lastname || (nombre ? nombre.split(" ").slice(1).join(" ") || nombre : undefined);
-    const resolvedEmail = email || correo;
-    const resolvedPassword = password || contraseña;
-    const resolvedRePassword = rePassword || confirmarContraseña || resolvedPassword;
-    const resolvedRole = role || rol || "usuario";
+  try {
+    const newUser = await authService.register({
+      firstname: resolvedFirstname,
+      lastname: resolvedLastname,
+      nombres: resolvedFirstname,
+      apellidos: resolvedLastname,
+      nombre: resolvedNombreCompleto || "Usuario",
+      gender,
+      birthdate,
+      email: resolvedEmail,
+      correo: resolvedEmail,
+      password: resolvedPassword,
+      contraseña: resolvedPassword,
+      rol: resolvedRol,
+    });
 
-    try {
-      await registerUserSchema.parseAsync({
-        firstname: resolvedFirstname,
-        lastname: resolvedLastname,
-        nombre: nombre || (resolvedFirstname ? `${resolvedFirstname} ${resolvedLastname || ""}`.trim() : undefined),
-        gender,
-        birthdate,
-        email: resolvedEmail,
-        correo: resolvedEmail,
-        password: resolvedPassword,
-        contraseña: resolvedPassword,
-        rePassword: resolvedRePassword,
-        confirmarContraseña: resolvedRePassword,
-        role: resolvedRole,
-      });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.json({ issues: error.issues });
-      }
+    const tokenFinal = newUser.accessToken || newUser.jwtToken;
+    res.cookie("authToken", tokenFinal, getAuthTokenCookieOptions());
+    if (newUser.refreshToken) {
+      res.cookie("refreshToken", newUser.refreshToken, getRefreshTokenCookieOptions());
     }
 
-    try {
-      const newUser = await authService.register({
-        firstname: resolvedFirstname,
-        lastname: resolvedLastname,
-        nombre: nombre || (resolvedFirstname ? `${resolvedFirstname} ${resolvedLastname || ""}`.trim() : "Usuario"),
-        gender,
-        birthdate,
-        email: resolvedEmail,
-        correo: resolvedEmail,
-        password: resolvedPassword,
-        contraseña: resolvedPassword,
-        role: resolvedRole,
-      });
-
-      return res.json({
-        message: "Registro exitoso. ¡Bienvenido a ELECTRONOVA!",
-        newUser,
-        user: newUser,
-        token: newUser.token,
-      });
-    } catch (error) {
-      if (error.code === "P2002" || error.code === 11000 || error.status === 400) {
-        return res.json({
-          issues: [
-            {
-              expected: "string",
-              code: "unique",
-              path: ["email"],
-              message: "El email ya esta registrado",
-            },
-          ],
-        });
-      }
+    return res.status(201).json({
+      message: "Registro exitoso. ¡Bienvenido a ELECTRONOVA!",
+      accessToken: tokenFinal,
+      jwtToken: tokenFinal,
+      refreshToken: newUser.refreshToken,
+      user: newUser.user,
+    });
+  } catch (error) {
+    if (error.code === "INVALID_EMAIL_DOMAIN") {
       return res.json({
         issues: [
           {
-            expected: "any",
-            code: "any",
-            path: ["any"],
-            message: "Error desconocido",
+            expected: "string",
+            code: "invalid_email",
+            path: ["email"],
+            message: error.message,
           },
         ],
       });
     }
-  }
-
-  async login(req, res) {
-    const { email, password, correo, contraseña, recordarme } = req.body;
-    const resolvedEmail = email || correo;
-    const resolvedPassword = password || contraseña;
-
-    try {
-      await loginUserSchema.parseAsync({
-        email: resolvedEmail,
-        password: resolvedPassword,
-        correo: resolvedEmail,
-        contraseña: resolvedPassword,
-        recordarme: Boolean(recordarme),
+    if (error.code === "P2002" || error.code === 11000 || error.status === 400) {
+      return res.json({
+        issues: [
+          {
+            expected: "string",
+            code: "unique",
+            path: ["email"],
+            message: "El email ya esta registrado",
+          },
+        ],
       });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.json({ issues: error.issues });
-      }
     }
+    return res.json({
+      issues: [
+        {
+          expected: "any",
+          code: "any",
+          path: ["any"],
+          message: "Error desconocido",
+        },
+      ],
+    });
+  }
+};
 
-    const result = await authService.login({
+// Inicio de sesión
+const login = async (req, res) => {
+  const { email, password, correo, contraseña, contrasena, recordarme } = req.body;
+  const resolvedEmail = email || correo;
+  const resolvedPassword = password || contraseña || contrasena;
+
+  try {
+    await loginUserSchema.parseAsync({
       email: resolvedEmail,
       password: resolvedPassword,
+      correo: resolvedEmail,
+      contraseña: resolvedPassword,
       recordarme: Boolean(recordarme),
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.json({ issues: error.issues });
+    }
+  }
+
+  const result = await authService.login({
+    email: resolvedEmail,
+    password: resolvedPassword,
+    recordarme: Boolean(recordarme),
+    browser: req.headers["user-agent"] || "",
+    ip: req.ip || "",
+  });
+
+  if (result.error === "INVALID_CREDENTIALS") {
+    return res.json({
+      issues: [
+        {
+          expected: "any",
+          code: "any",
+          path: ["email"],
+          message: "Email y/o contraseña incorrectos",
+        },
+      ],
+    });
+  }
+
+  const { user, jwtToken, refreshToken, accessToken } = result;
+  const tokenFinal = accessToken || jwtToken;
+
+  res.cookie("authToken", tokenFinal, getAuthTokenCookieOptions());
+  res.cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions());
+
+  const nombreMostrar = (user.nombres ? `${user.nombres} ${user.apellidos || ""}`.trim() : user.correo).trim();
+
+  return res.json({
+    message: `Bienvenido, ${nombreMostrar}`,
+    accessToken: tokenFinal,
+    jwtToken: tokenFinal,
+    refreshToken,
+    user,
+  });
+};
+
+// Renovación de tokens (Refresh Token)
+const refresh = async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "No autorizado. Refresh token no encontrado." });
+  }
+
+  try {
+    const result = await authService.refrescarToken({
+      refreshToken,
       browser: req.headers["user-agent"] || "",
       ip: req.ip || "",
     });
 
-    if (result.error === "INVALID_CREDENTIALS") {
-      return res.json({
-        issues: [
-          {
-            expected: "any",
-            code: "any",
-            path: ["email"],
-            message: "Email y/o contraseña incorrectos",
-          },
-        ],
-      });
-    }
-
-    const { credentials, jwtToken, refreshToken } = result;
-
-    const NODE_ENV = process.env.NODE_ENV || "developer";
-    res.cookie("authToken", jwtToken, {
-      httpOnly: NODE_ENV === "developer" ? false : true,
-      secure: NODE_ENV === "developer" ? false : true,
-      sameSite: "lax",
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: NODE_ENV === "developer" ? false : true,
-      secure: NODE_ENV === "developer" ? false : true,
-      sameSite: "lax",
-    });
+    res.cookie("authToken", result.accessToken, getAuthTokenCookieOptions());
+    res.cookie("refreshToken", result.refreshToken, getRefreshTokenCookieOptions());
 
     return res.json({
-      message: `Bienvenido, ${credentials.email}`,
-      token: jwtToken,
-      jwtToken,
-      refreshToken,
-      user: result.user || credentials,
-      admin: result.admin || null,
-      credentials,
+      message: "Token renovado exitosamente",
+      accessToken: result.accessToken,
+      jwtToken: result.accessToken,
+      user: result.user,
+    });
+  } catch (error) {
+    res.clearCookie("authToken", { path: "/" });
+    res.clearCookie("refreshToken", { path: "/" });
+    return res.status(error.status || 403).json({
+      message: error.message || "Token inválido o expirado",
     });
   }
+};
 
-  logout(req, res) {
-    res.clearCookie("authToken");
-    res.clearCookie("refreshToken");
-    return res.json({ message: "Sesión cerrada correctamente" });
+// Cierre de sesión
+const logout = async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
+  const userId = req.user?.id || req.admin?.id;
+
+  res.clearCookie("authToken", { path: "/" });
+  res.clearCookie("refreshToken", { path: "/" });
+
+  try {
+    await authService.logout({ refreshToken, userId });
+  } catch {}
+
+  return res.json({ message: "Sesión cerrada correctamente" });
+};
+
+// Perfil de usuario autenticado
+const getProfile = async (req, res) => {
+  try {
+    const user = await authService.obtenerPerfil(req.user?.id || req.admin?.id);
+    const isAdmin = ["ADMIN", "ADMINISTRATOR", "ADMINISTRADOR"].includes((user.rol || "").toUpperCase());
+    return res.json({
+      message: "Perfil obtenido exitosamente.",
+      user,
+      admin: isAdmin ? user : null,
+    });
+  } catch (error) {
+    return res.status(error.status || 500).json({ message: error.message || "Error desconocido" });
   }
+};
 
-  async getProfile(req, res) {
-    try {
-      const user = await authService.obtenerPerfil(req.user?.id || req.admin?.id);
-      return res.json({
-        message: "Perfil obtenido exitosamente.",
-        user,
-        admin: user.rol === "admin" ? user : null,
-      });
-    } catch (error) {
-      return res.status(error.status || 500).json({ message: error.message || "Error desconocido" });
+// Solicitud de recuperación de contraseña
+const forgotPassword = async (req, res) => {
+  try {
+    const email = req.body.email || req.body.correo;
+    if (!email) {
+      return res.status(400).json({ message: "El correo electrónico es obligatorio." });
     }
+    await authService.solicitarRecuperacion(email, req.headers.origin);
+    return res.json({ message: "Se ha enviado un enlace de recuperación a su correo electrónico." });
+  } catch (error) {
+    return res.status(error.status || 500).json({ message: error.message || "Error al procesar la solicitud" });
   }
+};
 
-  async forgotPassword(req, res) {
-    try {
-      const email = req.body.email || req.body.correo;
-      await authService.solicitarRecuperacion(email);
-      return res.json({ message: "Se ha enviado un enlace de recuperación a su correo electrónico." });
-    } catch (error) {
-      return res.status(error.status || 500).json({ message: error.message || "Error al procesar la solicitud" });
+// Restablecimiento de contraseña
+const resetPassword = async (req, res) => {
+  try {
+    const { id, token, password, nuevaContrasena } = req.body;
+    const nuevaPass = password || nuevaContrasena;
+    if (!id || !token || !nuevaPass) {
+      return res.status(400).json({ message: "Todos los datos son obligatorios para restablecer la contraseña." });
     }
+    await authService.restablecerContraseña(id, token, nuevaPass);
+    return res.json({ message: "Contraseña actualizada exitosamente." });
+  } catch (error) {
+    return res.status(error.status || 500).json({ message: error.message || "Error al restablecer la contraseña" });
   }
+};
 
-  async resetPassword(req, res) {
-    try {
-      const { id, token, password, nuevaContrasena } = req.body;
-      await authService.restablecerContraseña(id, token, password || nuevaContrasena);
-      return res.json({ message: "Contraseña actualizada exitosamente." });
-    } catch (error) {
-      return res.status(error.status || 500).json({ message: error.message || "Error al restablecer la contraseña" });
-    }
-  }
-}
+const authController = {
+  register,
+  login,
+  refresh,
+  logout,
+  getProfile,
+  forgotPassword,
+  resetPassword,
+};
 
-const authController = new AuthController();
-
-export { authController, AuthController };
-
-export const register = (req, res) => authController.register(req, res);
-export const login = (req, res) => authController.login(req, res);
-export const logout = (req, res) => authController.logout(req, res);
-export const getProfile = (req, res) => authController.getProfile(req, res);
-export const forgotPassword = (req, res) => authController.forgotPassword(req, res);
-export const resetPassword = (req, res) => authController.resetPassword(req, res);
+export {
+  authController,
+  register,
+  login,
+  refresh,
+  logout,
+  getProfile,
+  forgotPassword,
+  resetPassword,
+};

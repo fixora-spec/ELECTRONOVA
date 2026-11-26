@@ -1,5 +1,6 @@
 import api from './api';
 
+// Servicio de categorías
 export const categoriasService = {
   getAll: async () => {
     const response = await api.get('/categorias');
@@ -24,5 +25,5 @@ export const categoriasService = {
   delete: async (id) => {
     const response = await api.delete(`/categorias/${id}`);
     return response.data;
-  }
+  },
 };

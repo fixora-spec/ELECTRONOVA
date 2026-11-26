@@ -1,4 +1,4 @@
-
+// Botón reutilizable
 import './Boton.css';
 
 const Boton = ({ children, variant = 'primario', onClick, icon: Icon, className = '' }) => {

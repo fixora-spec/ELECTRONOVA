@@ -1,22 +1,99 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useState } from 'react';
+// Contexto y proveedor de autenticación
+import { createContext, useState, useEffect } from 'react';
 import { authService } from '../services/auth.service';
 
 export const AuthContext = createContext();
 
+// Utilidades de sesión
+const safeParse = (raw) => {
+  if (!raw || raw === 'undefined' || raw === 'null') return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
+export const esRolAdmin = (rol) => {
+  const rolUpper = String(rol || '').toUpperCase();
+  return rolUpper === 'ADMIN' || rolUpper === 'ADMINISTRATOR' || rolUpper === 'ADMINISTRADOR';
+};
+
+// Proveedor de autenticación
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const savedUser = sessionStorage.getItem('user') || sessionStorage.getItem('admin');
-    return savedUser ? JSON.parse(savedUser) : null;
+  const [user, setUser] = useState(() =>
+    safeParse(sessionStorage.getItem('user') || sessionStorage.getItem('admin'))
+  );
+
+  const [admin, setAdmin] = useState(() => safeParse(sessionStorage.getItem('admin')));
+
+  const [token, setToken] = useState(() => {
+    const savedToken = sessionStorage.getItem('token');
+    return savedToken && savedToken !== 'undefined' && savedToken !== 'null' ? savedToken : null;
   });
 
-  const [admin, setAdmin] = useState(() => {
-    const savedAdmin = sessionStorage.getItem('admin');
-    return savedAdmin ? JSON.parse(savedAdmin) : null;
-  });
+  const limpiarSesionLocal = () => {
+    setToken(null);
+    setUser(null);
+    setAdmin(null);
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('admin');
+  };
 
-  const [token, setToken] = useState(() => sessionStorage.getItem('token') || null);
+  const guardarSesionLocal = (cuenta, authToken, adminData = null, refreshToken = null) => {
+    if (authToken) {
+      setToken(authToken);
+      sessionStorage.setItem('token', authToken);
+    }
+    if (refreshToken) {
+      sessionStorage.setItem('refreshToken', refreshToken);
+    }
+    if (cuenta) {
+      setUser(cuenta);
+      sessionStorage.setItem('user', JSON.stringify(cuenta));
+    }
+    if (adminData) {
+      setAdmin(adminData);
+      sessionStorage.setItem('admin', JSON.stringify(adminData));
+    } else {
+      setAdmin(null);
+      sessionStorage.removeItem('admin');
+    }
+  };
 
+  // Verificación de sesión activa
+  useEffect(() => {
+    let cancelado = false;
+
+    const verificarSesionActiva = async () => {
+      try {
+        const perfilData = await authService.checkSession();
+        if (cancelado) return;
+        const cuenta = perfilData?.user || perfilData?.admin;
+        if (cuenta) {
+          const tokenActual = token || 'cookie-session';
+          const adminObj = esRolAdmin(cuenta.rol) || perfilData?.admin ? perfilData.admin || cuenta : null;
+          guardarSesionLocal(cuenta, tokenActual, adminObj);
+        }
+      } catch {
+        if (!cancelado && sessionStorage.getItem('token') === 'cookie-session') {
+          limpiarSesionLocal();
+        }
+      }
+    };
+
+    verificarSesionActiva();
+
+    return () => {
+      cancelado = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Acciones de autenticación
   const login = async (credenciales) => {
     const data = await authService.login(credenciales);
 
@@ -26,22 +103,24 @@ export const AuthProvider = ({ children }) => {
       throw err;
     }
 
-    const usuarioActual = data.user || data.admin;
-    const authToken = data.token || data.jwtToken;
+    let usuarioActual = data.user || data.admin || data.credentials;
+    const authToken = data.accessToken || data.token || data.jwtToken || 'cookie-session';
 
-    setToken(authToken);
-    setUser(usuarioActual);
-    sessionStorage.setItem('token', authToken);
-    sessionStorage.setItem('user', JSON.stringify(usuarioActual));
-
-    if (usuarioActual?.rol === 'admin' || data.admin) {
-      setAdmin(data.admin || usuarioActual);
-      sessionStorage.setItem('admin', JSON.stringify(data.admin || usuarioActual));
-    } else {
-      setAdmin(null);
-      sessionStorage.removeItem('admin');
+    if (!usuarioActual) {
+      try {
+        const perfilData = await authService.checkSession();
+        usuarioActual = perfilData.user || perfilData.admin;
+      } catch {
+        const correoRef = credenciales.correo || credenciales.email;
+        usuarioActual = { correo: correoRef, rol: 'CLIENTE' };
+      }
     }
 
+    const adminData = esRolAdmin(usuarioActual?.rol) || data.admin ? data.admin || usuarioActual : null;
+    guardarSesionLocal(usuarioActual, authToken, adminData, data.refreshToken);
+
+    data.user = usuarioActual;
+    data.admin = adminData;
     return data;
   };
 
@@ -55,32 +134,18 @@ export const AuthProvider = ({ children }) => {
     }
 
     const usuarioActual = data.user || data.newUser;
-    const authToken = data.token || data.jwtToken;
-
-    if (authToken) {
-      setToken(authToken);
-      sessionStorage.setItem('token', authToken);
-    }
-    if (usuarioActual) {
-      setUser(usuarioActual);
-      sessionStorage.setItem('user', JSON.stringify(usuarioActual));
-    }
-    setAdmin(null);
-    sessionStorage.removeItem('admin');
+    const authToken = data.accessToken || data.token || data.jwtToken || 'cookie-session';
+    guardarSesionLocal(usuarioActual, authToken, null, data.refreshToken);
 
     return data;
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    setAdmin(null);
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('admin');
+  const logout = async () => {
+    await authService.logout().catch(() => {});
+    limpiarSesionLocal();
   };
 
-  const isAdmin = user?.rol === 'admin' || !!admin;
+  const isAdmin = esRolAdmin(user?.rol) || !!admin;
 
   return (
     <AuthContext.Provider

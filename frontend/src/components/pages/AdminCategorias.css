@@ -1,4 +1,4 @@
-/* AdminCategorias.css y estilos generales CRUD */
+/* Cabecera y controles del módulo */
 .admin-modulo {
   display: flex;
   flex-direction: column;
@@ -48,7 +48,7 @@
   background: white;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
 }
 
 .admin-buscador {
@@ -79,7 +79,7 @@
 .tabla-contenedor {
   background: white;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
   overflow-x: auto;
 }
 
@@ -184,7 +184,7 @@
   width: 100%;
   max-width: 500px;
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   max-height: 90vh;
@@ -251,7 +251,7 @@
 .modal-formulario textarea:focus,
 .modal-formulario select:focus {
   outline: none;
-  border-color: #0d284a; /* Un azul más oscuro al enfocar */
+  border-color: #0d284a;
   box-shadow: 0 0 0 2px rgba(13, 40, 74, 0.1);
 }
 
@@ -299,7 +299,7 @@
   cursor: not-allowed;
 }
 
-/* Input File Personalizado */
+/* Carga de archivos */
 .custom-file-upload {
   display: flex;
   align-items: center;
@@ -347,6 +347,7 @@
   gap: 1.5rem;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .admin-productos-grid {
     grid-template-columns: 1fr;
@@ -357,7 +358,7 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .btn-nuevo {
     width: 100%;
     justify-content: center;
@@ -368,7 +369,7 @@
     align-items: stretch;
     gap: 1rem;
   }
-  
+
   .admin-buscador {
     max-width: 100%;
   }

@@ -1,17 +1,23 @@
 import { Schema, model } from "mongoose";
-import argon2 from "argon2";
-import bcrypt from "bcrypt";
+import { configurarPasswordSchema } from "./Administrador.js";
 
+// Esquema de Usuario
 const UsuarioSchema = new Schema(
   {
     nombre: { type: String, required: true },
+    nombres: { type: String },
+    apellidos: { type: String },
     firstname: { type: String },
     lastname: { type: String },
     gender: { type: String },
     birthdate: { type: Date },
     correo: { type: String, required: true, unique: true },
     contraseña: { type: String, required: true },
-    rol: { type: String, default: "usuario" },
+    rol: {
+      type: String,
+      enum: ["CLIENTE", "ADMINISTRATOR", "VENDEDOR", "usuario", "admin"],
+      default: "CLIENTE",
+    },
   },
   {
     timestamps: true,
@@ -19,28 +25,16 @@ const UsuarioSchema = new Schema(
   }
 );
 
+// Normalización y seguridad
 UsuarioSchema.pre("validate", function () {
-  if (!this.nombre && (this.firstname || this.lastname)) {
-    this.nombre = [this.firstname, this.lastname].filter(Boolean).join(" ").trim() || "Usuario";
+  const n = this.nombres || this.firstname;
+  const a = this.apellidos || this.lastname;
+  if (!this.nombre && (n || a)) {
+    this.nombre = [n, a].filter(Boolean).join(" ").trim() || "Usuario";
   }
 });
 
-UsuarioSchema.pre("save", async function () {
-  if (!this.isModified("contraseña")) return;
-  if (this.contraseña && this.contraseña.startsWith("$argon2")) return;
-  this.contraseña = await argon2.hash(this.contraseña);
-});
-
-UsuarioSchema.methods.comparePassword = async function (candidatePassword) {
-  try {
-    if (this.contraseña && this.contraseña.startsWith("$argon2")) {
-      return await argon2.verify(this.contraseña, candidatePassword);
-    }
-    return await bcrypt.compare(candidatePassword, this.contraseña);
-  } catch {
-    return false;
-  }
-};
+configurarPasswordSchema(UsuarioSchema);
 
 const Usuario = model("Usuario", UsuarioSchema);
 

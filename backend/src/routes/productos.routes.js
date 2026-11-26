@@ -11,6 +11,7 @@ import {
 import { authMiddleware, adminMiddleware } from "../middlewares/auth.middleware.js";
 import { uploadMiddleware } from "../middlewares/upload.middleware.js";
 
+// Rutas de productos
 const productosRoutes = Router();
 
 productosRoutes.get("/", getProductos);

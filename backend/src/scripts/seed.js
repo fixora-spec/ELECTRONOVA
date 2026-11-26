@@ -9,7 +9,7 @@ import { Usuario } from "../models/Usuario.js";
 
 dotenv.config();
 
-// Helper para generar imagen SVG en Base64 con icono y colores según categoría
+// Generación de imagen SVG en Base64
 const generarSvgBase64 = (titulo, colorHex = "#0d47a1") => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
     <rect width="600" height="600" fill="#f8fafc"/>
@@ -20,6 +20,90 @@ const generarSvgBase64 = (titulo, colorHex = "#0d47a1") => {
     <text x="300" y="425" font-family="Arial, sans-serif" font-size="14" fill="#64748b" text-anchor="middle">ELECTRONOVA • Catálogo Eléctrico</text>
   </svg>`;
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+};
+
+// Catálogo de imágenes reales por categoría para productos eléctricos
+const IMAGENES_REALES_CATEGORIAS = {
+  // 0: Conductores y Cables Eléctricos
+  0: [
+    "https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 1: Tableros y Protección Eléctrica
+  1: [
+    "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 2: Iluminación LED e Industrial
+  2: [
+    "https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 3: Tomacorrientes e Interruptores
+  3: [
+    "https://images.unsplash.com/photo-1558227691-41ea78d1f631?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 4: Canalización y Tuberías
+  4: [
+    "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1541888946425-d0fbb18f15f6?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 5: Tomas y Clavijas Industriales
+  5: [
+    "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 6: Automatización y Control Industrial
+  6: [
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 7: Herramientas e Instrumentación
+  7: [
+    "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1578873375969-d65fae3b6f27?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 8: Sistemas de Puesta a Tierra
+  8: [
+    "https://images.unsplash.com/photo-1621905252472-943afaa20e20?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1589939705383-5185137a7f0f?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1541888946425-d0fbb18f15f6?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&auto=format&fit=crop&q=80",
+  ],
+  // 9: Seguridad y EPP Eléctrico
+  9: [
+    "https://images.unsplash.com/photo-1578873375969-d65fae3b6f27?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800&auto=format&fit=crop&q=80",
+  ],
 };
 
 const seedDatabase = async () => {
@@ -50,6 +134,16 @@ const seedDatabase = async () => {
       rol: "usuario",
     });
     const savedCliente = await cliente.save();
+
+    const clienteErick = new Usuario({
+      nombre: "Erick Alexander Atalaya Abanto",
+      nombres: "Erick Alexander",
+      apellidos: "Atalaya Abanto",
+      correo: "aeriatab@gmail.com",
+      contraseña: "ERICK123",
+      rol: "CLIENTE",
+    });
+    await clienteErick.save();
 
     const empresa = new Empresa({
       nombre: "ELECTRONOVA S.A.C.",
@@ -124,14 +218,11 @@ const seedDatabase = async () => {
       }))
     );
 
-    // Mapeo por índice para asociar productos fácilmente
     const cat = categoriasInsertadas;
 
     console.log("Definiendo catálogo de 100 productos reales...");
     const productosData = [
-      // ==========================================================
-      // CATEGORÍA 0: Conductores y Cables Eléctricos (10 productos)
-      // ==========================================================
+      // Categoría 0: Conductores y Cables Eléctricos
       {
         catIndex: 0,
         nombre: "Cable THW-90 14 AWG Indeco (Rollo 100m)",
@@ -233,9 +324,7 @@ const seedDatabase = async () => {
         caracteristicas: "Presentación en caja Pull-Box de 305 metros | Color azul.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 1: Tableros y Protección Eléctrica (10 productos)
-      // ==========================================================
+      // Categoría 1: Tableros y Protección Eléctrica
       {
         catIndex: 1,
         nombre: "Interruptor Termomagnético 2x20A Schneider Acti9 iK60N",
@@ -337,9 +426,7 @@ const seedDatabase = async () => {
         caracteristicas: "Fijación sobre riel DIN o placa base con tornillos.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 2: Iluminación LED e Industrial (10 productos)
-      // ==========================================================
+      // Categoría 2: Iluminación LED e Industrial
       {
         catIndex: 2,
         nombre: "Campana Industrial LED UFO 150W 6500K Philips IP65",
@@ -441,9 +528,7 @@ const seedDatabase = async () => {
         caracteristicas: "Carcasa plástica resistente a vibraciones y caídas leves.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 3: Tomacorrientes e Interruptores (10 productos)
-      // ==========================================================
+      // Categoría 3: Tomacorrientes e Interruptores
       {
         catIndex: 3,
         nombre: "Tomacorriente Doble con Línea a Tierra Ticino Modus Plus",
@@ -545,9 +630,7 @@ const seedDatabase = async () => {
         caracteristicas: "Junta de jebe perimetral para sellado hermético contra la pared.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 4: Canalización y Tuberías (10 productos)
-      // ==========================================================
+      // Categoría 4: Canalización y Tuberías
       {
         catIndex: 4,
         nombre: "Tubo Conduit PVC Pesado 3/4\" x 3m Pavco",
@@ -649,9 +732,7 @@ const seedDatabase = async () => {
         caracteristicas: "Fijación rápida y segura con solo un perno por abrazadera.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 5: Tomas y Clavijas Industriales (10 productos)
-      // ==========================================================
+      // Categoría 5: Tomas y Clavijas Industriales
       {
         catIndex: 5,
         nombre: "Enchufe Industrial Macho 3P+T 16A 380V IP44 Mennekes",
@@ -753,9 +834,7 @@ const seedDatabase = async () => {
         caracteristicas: "Tecnología de inserción suave que previene el desgaste prematuro.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 6: Automatización y Control Industrial (10 productos)
-      // ==========================================================
+      // Categoría 6: Automatización y Control Industrial
       {
         catIndex: 6,
         nombre: "Contactor Tripolar 18A Bobina 220VAC Schneider TeSys Deca",
@@ -857,9 +936,7 @@ const seedDatabase = async () => {
         caracteristicas: "Ideal para conmutación de modos de funcionamiento de bombas.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 7: Herramientas e Instrumentación (10 productos)
-      // ==========================================================
+      // Categoría 7: Herramientas e Instrumentación
       {
         catIndex: 7,
         nombre: "Pinza Amperimétrica Digital True-RMS Fluke 323",
@@ -961,9 +1038,7 @@ const seedDatabase = async () => {
         caracteristicas: "Pantalla retroiluminada a color con lectura máxima/mínima instantánea.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 8: Sistemas de Puesta a Tierra (10 productos)
-      // ==========================================================
+      // Categoría 8: Sistemas de Puesta a Tierra
       {
         catIndex: 8,
         nombre: "Varilla de Cobre Puro 3/4\" x 2.40m para Pozo a Tierra",
@@ -1065,9 +1140,7 @@ const seedDatabase = async () => {
         caracteristicas: "Ideal para cerros, arena seca y terrenos de muy difícil disipación.",
       },
 
-      // ==========================================================
-      // CATEGORÍA 9: Seguridad y EPP Eléctrico (10 productos)
-      // ==========================================================
+      // Categoría 9: Seguridad y EPP Eléctrico
       {
         catIndex: 9,
         nombre: "Guantes Dieléctricos Clase 0 (1000V) Regeltex",
@@ -1188,16 +1261,29 @@ const seedDatabase = async () => {
 
     const productosGuardados = await Producto.insertMany(productosParaInsertar);
 
-    console.log("Generando imágenes ilustrativas asociadas para cada producto...");
-    const imagenesParaInsertar = productosGuardados.map((prod, idx) => {
+    console.log("Generando imágenes reales asociadas para cada producto...");
+    const imagenesParaInsertar = [];
+    productosGuardados.forEach((prod, idx) => {
       const pData = productosData[idx];
-      const colorCat = categoriasData[pData.catIndex].color;
-      return {
+      const pool = IMAGENES_REALES_CATEGORIAS[pData.catIndex] || IMAGENES_REALES_CATEGORIAS[0];
+      const imgPrincipal = pool[idx % pool.length];
+      const imgSecundaria = pool[(idx + 1) % pool.length];
+
+      // Imagen principal real
+      imagenesParaInsertar.push({
         idProducto: prod._id,
-        tipo: "image/svg+xml",
-        ubicacion: generarSvgBase64(prod.nombre, colorCat),
-        almacenamiento: "base64",
-      };
+        tipo: "image/jpeg",
+        ubicacion: imgPrincipal,
+        almacenamiento: "url",
+      });
+
+      // Imagen secundaria real para galería
+      imagenesParaInsertar.push({
+        idProducto: prod._id,
+        tipo: "image/jpeg",
+        ubicacion: imgSecundaria,
+        almacenamiento: "url",
+      });
     });
 
     await Imagen.insertMany(imagenesParaInsertar);
@@ -1205,11 +1291,11 @@ const seedDatabase = async () => {
     console.log("==================================================");
     console.log("¡SEED EXITOSO!");
     console.log(`- 1 Administrador creado (${savedAdmin.correo})`);
-    console.log(`- 1 Cliente de prueba creado (${savedCliente.correo})`);
+    console.log(`- 2 Clientes de prueba creados (${savedCliente.correo}, ${clienteErick.correo})`);
     console.log(`- 1 Empresa registrada (${empresa.nombre})`);
     console.log(`- ${categoriasInsertadas.length} Categorías eléctricas creadas`);
     console.log(`- ${productosGuardados.length} Productos reales catalogados`);
-    console.log(`- ${imagenesParaInsertar.length} Imágenes asociadas generadas`);
+    console.log(`- ${imagenesParaInsertar.length} Imágenes reales asociadas generadas`);
     console.log("==================================================");
 
     process.exit(0);

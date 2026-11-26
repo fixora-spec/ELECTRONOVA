@@ -1,13 +1,15 @@
+// Modal de formulario de categoría
 import { useState } from 'react';
-import { X } from 'lucide-react';
 import { categoriasService } from '../../services/categorias.service';
 import { useAuth } from '../../hooks/useAuth';
+import BotonCerrarModal from '../atoms/BotonCerrarModal';
 
 const ModalFormularioCategoria = ({ modoEdicion, categoriaInicial, onClose, onSuccess }) => {
   const { admin } = useAuth();
   const [categoriaActual, setCategoriaActual] = useState(categoriaInicial);
   const [guardando, setGuardando] = useState(false);
 
+  // Manejo de eventos
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCategoriaActual({ ...categoriaActual, [name]: value });
@@ -16,7 +18,7 @@ const ModalFormularioCategoria = ({ modoEdicion, categoriaInicial, onClose, onSu
   const handleSubmit = async (e) => {
     e.preventDefault();
     setGuardando(true);
-    
+
     try {
       const dataToSend = {
         nombre: categoriaActual.nombre,
@@ -29,7 +31,7 @@ const ModalFormularioCategoria = ({ modoEdicion, categoriaInicial, onClose, onSu
       } else {
         await categoriasService.create(dataToSend);
       }
-      
+
       onSuccess();
     } catch (err) {
       alert(err.response?.data?.message || 'Error al guardar la categoría');
@@ -41,32 +43,32 @@ const ModalFormularioCategoria = ({ modoEdicion, categoriaInicial, onClose, onSu
   return (
     <div className="modal-overlay">
       <div className="modal-contenido">
+        {/* Cabecera */}
         <div className="modal-cabecera">
           <h3>{modoEdicion ? 'Editar Categoría' : 'Nueva Categoría'}</h3>
-          <button type="button" className="btn-cerrar-modal" onClick={onClose}>
-            <X size={24} />
-          </button>
+          <BotonCerrarModal onClick={onClose} className="btn-cerrar-modal" />
         </div>
-        
+
+        {/* Formulario */}
         <form onSubmit={handleSubmit} className="modal-formulario" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div style={{ overflowY: 'auto', paddingRight: '0.5rem', paddingBottom: '1rem', flex: 1 }}>
             <div className="form-grupo">
               <label>Nombre de la Categoría *</label>
-              <input 
-                type="text" 
-                name="nombre" 
-                value={categoriaActual.nombre} 
-                onChange={handleInputChange} 
-                required 
+              <input
+                type="text"
+                name="nombre"
+                value={categoriaActual.nombre}
+                onChange={handleInputChange}
+                required
                 placeholder="Ej. Iluminación LED"
               />
             </div>
-            
+
             <div className="form-grupo">
               <label>Descripción</label>
-              <textarea 
-                name="descripcion" 
-                value={categoriaActual.descripcion} 
+              <textarea
+                name="descripcion"
+                value={categoriaActual.descripcion}
                 onChange={handleInputChange}
                 rows="4"
                 placeholder="Describe brevemente los productos de esta categoría"
